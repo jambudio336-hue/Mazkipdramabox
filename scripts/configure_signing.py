@@ -21,9 +21,12 @@ if options.clean:
 names = ['ANDROID_KEYSTORE_BASE64', 'ANDROID_KEYSTORE_PASSWORD',
          'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD']
 values = [os.environ.get(name, '') for name in names]
-if not any(values):
-    print('未配置签名 Secrets：生成预览 APK；正式发布请配置固定签名。')
-    raise SystemExit(0)
+if not all(values):
+    missing = [name for name, value in zip(names, values) if not value]
+    raise SystemExit(
+        '缺少 Android Release 签名 Secrets：' + ', '.join(missing) +
+        '。为防止误发 Debug 签名 APK，已在构建前终止。'
+    )
 if not all(values):
     raise SystemExit('Android 签名需要同时配置全部四个 Secrets。')
 try:
