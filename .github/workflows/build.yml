@@ -275,5 +275,5 @@ jobs:
               fi
             done
           else
-            gh release create "$tag" release/* --title "红果鉴 / 真果鉴 ${version}" --notes-file notes.md
+            gh release create "$tag" release/* --title "M4zk1pL4yDramaBox ${version}" --notes-file notes.md
           fi
