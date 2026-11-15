@@ -56,12 +56,11 @@ android {
             applicationIdSuffix = ".debug"
         }
         release {
-            if (!releaseKey.exists()) {
-                throw GradleException(
-                    "正式 Release 必须配置 android/key.properties；禁止使用 Android Debug 证书签名。"
-                )
+            // Tanpa key.properties, hasil Release dibiarkan unsigned.
+            // Jika key.properties tersedia, gunakan konfigurasi signing release.
+            if (releaseKey.exists()) {
+                signingConfig = signingConfigs.getByName("release")
             }
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
