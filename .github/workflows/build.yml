@@ -102,7 +102,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='3fdc07a2297421373607c098f9b847c1377d9266ee07003b9d7fda8c4b581d8a'
+          expected='7b8793c893e485180901d4e247d018ae46aba5ae639b03f101689f69a74d5973'
           apksigner=$(find "${ANDROID_HOME}/build-tools" -name apksigner -type f 2>/dev/null | sort | tail -n1 || true)
           if [ -z "$apksigner" ]; then
             sdkmanager 'build-tools;35.0.0' >/dev/null
@@ -263,7 +263,7 @@ jobs:
             printf '\n%s\n' "Windows（解压后运行 hongguojian.exe 或 zhenguojian.exe）："
             printf '%s\n' "- *-windows-x64.zip：Windows 10/11 x64 完整包；构建机没有音频和图形设备，播放自检未通过，未做设备验收"
             printf '\n%s\n' "校验：SHA256SUMS.txt"
-            printf '%s\n' "签名证书 SHA-256：3F:DC:07:A2:29:74:21:37:36:07:C0:98:F9:B8:47:C1:37:7D:92:66:EE:07:00:3B:9D:7F:DA:8C:4B:58:1D:8A"
+            printf '%s\n' "签名证书 SHA-256：7B:87:93:C8:93:E4:85:18:09:01:D4:E2:47:D0:18:AE:46:AB:A5:AE:63:9B:03:F1:01:68:9F:69:A7:4D:59:73"
           } > notes.md
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" release/* --clobber
