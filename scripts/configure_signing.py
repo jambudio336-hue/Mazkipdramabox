@@ -27,8 +27,6 @@ if not all(values):
         '缺少 Android Release 签名 Secrets：' + ', '.join(missing) +
         '。为防止误发 Debug 签名 APK，已在构建前终止。'
     )
-if not all(values):
-    raise SystemExit('Android 签名需要同时配置全部四个 Secrets。')
 try:
     data = base64.b64decode(''.join(values[0].split()), validate=True)
 except ValueError:
