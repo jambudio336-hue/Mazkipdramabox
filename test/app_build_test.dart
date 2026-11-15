@@ -25,7 +25,7 @@ void main() {
       final repository = FixtureRepository();
       await tester.pumpWidget(DuanjuApp(repository: repository, store: store));
       await tester.pumpAndSettle();
-      expect(find.text(allSourcesEnabled ? '真果鉴' : '红果鉴'), findsOneWidget);
+      expect(find.text('M4zk1pL4yDramaBox'), findsOneWidget);
       expect(appSlug, allSourcesEnabled ? 'zhenguojian' : 'hongguojian');
       expect(repository.requests, [allSourcesEnabled ? 'huangdou' : 'hongguo']);
       expect(store.sources.length, allSourcesEnabled ? 5 : 1);
