@@ -56,7 +56,12 @@ android {
             applicationIdSuffix = ".debug"
         }
         release {
-            signingConfig = signingConfigs.getByName(if (releaseKey.exists()) "release" else "debug")
+            if (!releaseKey.exists()) {
+                throw GradleException(
+                    "正式 Release 必须配置 android/key.properties；禁止使用 Android Debug 证书签名。"
+                )
+            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
