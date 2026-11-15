@@ -60,6 +60,9 @@ android {
             // Jika key.properties tersedia, gunakan konfigurasi signing release.
             if (releaseKey.exists()) {
                 signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Gunakan debug keystore bawaan Android untuk APK uji yang dapat diinstal.
+                signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
