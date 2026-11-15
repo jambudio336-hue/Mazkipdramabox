@@ -21,17 +21,25 @@ class _SplashScreenState extends State<SplashScreen> {
       'https://raw.githubusercontent.com/jambudio336-hue/Mazkipdramabox/main/kiplay.mp4';
   static const _etagKey = 'm4zk1playdramabox_splash_etag';
 
-  final Player _player = Player();
-  late final VideoController _controller = VideoController(_player);
+  late final Player _player;
+  late final VideoController _controller;
   StreamSubscription<bool>? _completedSubscription;
   StreamSubscription<String>? _errorSubscription;
   bool _ready = false;
   bool _finished = false;
   bool _released = false;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
+    if (!Platform.isAndroid) {
+      _finished = true;
+      return;
+    }
+    _player = Player();
+    _controller = VideoController(_player);
+    _initialized = true;
     _completedSubscription = _player.stream.completed.listen((completed) {
       if (completed) _finish();
     });
@@ -97,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _releasePlayer() async {
-    if (_released) return;
+    if (_released || !_initialized) return;
     _released = true;
     await _player.dispose();
   }
@@ -106,7 +114,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void dispose() {
     _completedSubscription?.cancel();
     _errorSubscription?.cancel();
-    unawaited(_releasePlayer());
+    if (_initialized) unawaited(_releasePlayer());
     super.dispose();
   }
 
