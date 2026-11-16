@@ -104,7 +104,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _foreground = true;
   bool _playIntent = true;
   bool _pendingError = false;
-  String _loadingMessage = '正在准备播放';
+  String _loadingMessage = 'Menyiapkan pemutaran';
   String? _error;
   String? _saveWarning;
   PlaybackPlan? _plan;
@@ -125,9 +125,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     preload: _preloadEnabled,
   );
   String get _qualityLabel => _plan?.local == true
-      ? '本地原画'
+      ? 'Kualitas asli (lokal)'
       : _requestedQuality == 0
-      ? '自动'
+      ? 'Otomatis'
       : '${_requestedQuality}P';
   String get _session => _plan?.session ?? '';
   double get _currentPosition =>
@@ -175,8 +175,8 @@ class _PlayerScreenState extends State<PlayerScreen>
       onFullscreen: _rotate,
       onEpisode: (direction) {
         final next = _index + direction;
-        if (next < 0) return '已经是第一集';
-        if (next >= widget.detail.episodes.length) return '已经是最后一集';
+        if (next < 0) return 'Ini episode pertama';
+        if (next >= widget.detail.episodes.length) return 'Ini episode terakhir';
         unawaited(_play(next));
         return '第 ${widget.detail.episodes[next].number} 集';
       },
@@ -281,11 +281,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
     if (_profileEpoch != widget.store.profileEpoch ||
         handoff?.cancelled == true) {
-      handoff?.fail('接收用户已变更，推送已取消');
+      handoff?.fail('Pengguna penerima berubah; pemutaran yang dikirim dibatalkan');
       if (handoff != null)
         unawaited(widget.repository.release(handoff.plan.session));
       _loading = false;
-      _error = '播放接收已取消';
+      _error = 'Penerimaan pemutaran dibatalkan';
     } else {
       _play(
         _index,
@@ -309,7 +309,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       _preloader.clear();
       _handoffOwned = false;
       _playIntent = false;
-      widget.handoff?.fail('接收端用户已变更');
+      widget.handoff?.fail('Pengguna di perangkat penerima berubah');
       unawaited(_player.pause());
     }
     if (!_closed &&
@@ -351,7 +351,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     final position = state.position.inMilliseconds / 1000;
     final duration = state.duration.inMilliseconds / 1000;
     if (duration > 0 && handoff.position > duration + 2) {
-      handoff.fail('续播位置超过接收端分集时长');
+      handoff.fail('Posisi lanjut menonton melebihi durasi episode di perangkat penerima');
       return;
     }
     if (!state.playing ||
@@ -410,9 +410,9 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
         stillCurrent: current,
         onAccepted: () async {
-          if (!current()) throw StateError('本机播放内容已变更');
+          if (!current()) throw StateError('Konten yang diputar di perangkat ini telah berubah');
           await _stopForLan();
-          if (!current()) throw StateError('本机播放内容已变更');
+          if (!current()) throw StateError('Konten yang diputar di perangkat ini telah berubah');
         },
       );
     } catch (error) {
@@ -593,9 +593,9 @@ class _PlayerScreenState extends State<PlayerScreen>
           _localFailure = current.local;
           _error = current.local
               ? widget.allowOnlineFallback
-                    ? '本地视频读取失败，请重试或重新下载；也可以手动改为在线播放。'
-                    : '本地成品读取失败，请重试或重新生成。'
-              : '自动恢复未成功，请检查网络后重试，也可换一集或选择其他清晰度。';
+                    ? 'Gagal membaca video lokal. Coba lagi, unduh ulang, atau pilih pemutaran online.'
+                    : 'Gagal membaca hasil video lokal. Coba lagi atau buat ulang.'
+              : 'OtomatisPulihkan未成功，请检查网络后Coba lagi，也可换一集或选择其他清晰度。';
         });
       }
       return;
@@ -606,7 +606,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   void _togglePlayback() {
     if (_closed || _loading || _error != null) return;
     _handoffOwned = false;
-    widget.handoff?.fail('接收端已操作播放');
+    widget.handoff?.fail('Perangkat penerima mengubah pemutaran');
     _interactions.cancel();
     _playIntent = !_player.state.playing;
     _health.reset();
@@ -657,7 +657,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       }
     } catch (_) {
       if (mounted && !_closed && _saveWarning == null) {
-        setState(() => _saveWarning = '观看进度尚未保存，请检查存储空间后重试。');
+        setState(() => _saveWarning = 'Progres tontonan belum tersimpan. Periksa ruang penyimpanan lalu coba lagi.');
       }
     }
   }
@@ -686,7 +686,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         handoffPlan == null &&
         recoveryAction == null) {
       _handoffOwned = false;
-      widget.handoff?.fail('接收端已更换播放内容');
+      widget.handoff?.fail('Perangkat penerima mengganti konten pemutaran');
     }
     if (index != _index) _forceOnline = false;
     final warmed =
@@ -718,9 +718,9 @@ class _PlayerScreenState extends State<PlayerScreen>
       _error = null;
       _localFailure = false;
       _loadingMessage = switch (recoveryAction) {
-        PlaybackRecoveryAction.alternative => '正在切换备用线路',
-        PlaybackRecoveryAction.refresh => '正在重新获取播放地址',
-        _ => '正在准备播放',
+        PlaybackRecoveryAction.alternative => 'Beralih ke jalur cadangan',
+        PlaybackRecoveryAction.refresh => 'Mengambil ulang alamat video',
+        _ => 'Menyiapkan pemutaran',
       };
     });
     LanController.current?.detachPlayback(_lanIdentity);
@@ -769,7 +769,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           return;
         }
         if (plan.url.isEmpty) {
-          throw AppFailure('站源未返回播放地址，请重试');
+          throw AppFailure('Sumber tidak memberikan alamat video. Coba lagi.');
         }
         final platform = _player.platform;
         if (platform is NativePlayer) {
@@ -833,7 +833,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               _localFailure =
                   (error is AppFailure && error.code == 'local_media') ||
                   (widget.localOnly && !_forceOnline);
-              _error = error is AppFailure ? error.message : '无法播放这一集，请重试或换一集。';
+              _error = error is AppFailure ? error.message : 'Episode ini tidak dapat diputar. Coba lagi atau pilih episode lain.';
               widget.handoff?.fail(_error!);
             });
           }
@@ -915,7 +915,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           _fullscreen = previous;
           _automaticFullscreenSuppressed = previousSuppressed;
         });
-        _notice('无法切换全屏，请重试');
+        _notice('Tidak dapat mengaktifkan layar penuh. Coba lagi.');
       }
     } finally {
       _rotating = false;
@@ -932,7 +932,7 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   Future<void> _setPreferences(PlaybackPreferences preferences) async {
     if (_closed || widget.store.profileEpoch != _profileEpoch) {
-      throw StateError('当前用户已变更');
+      throw StateError('Pengguna aktif telah berubah');
     }
     _interactions.cancel();
     await widget.store.setPlaybackPreferences(preferences);
@@ -960,7 +960,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     try {
       await widget.store.toggleFavorite(widget.detail.drama);
     } catch (_) {
-      _notice('追剧记录未能保存，请检查存储空间后重试');
+      _notice('Riwayat mengikuti drama gagal disimpan. Periksa ruang penyimpanan lalu coba lagi.');
     }
   }
 
@@ -1016,7 +1016,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   Future<void> _seekTo(Duration target) async {
     if (_closed || _loading || _error != null) return;
     _handoffOwned = false;
-    widget.handoff?.fail('接收端已调整播放位置');
+    widget.handoff?.fail('Perangkat penerima mengubah posisi pemutaran');
     final ticket = ++_seekSequence;
     final generation = _generation;
     _danmaku.beginSeek();
@@ -1025,7 +1025,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       await _player.seek(target);
       succeeded = true;
     } catch (_) {
-      _notice('跳转失败，请重试');
+      _notice('Gagal berpindah posisi. Coba lagi.');
     } finally {
       if (!_closed && ticket == _seekSequence && generation == _generation) {
         _danmaku.endSeek(succeeded ? target : _player.state.position);
@@ -1104,7 +1104,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
       );
     } catch (_) {
-      _notice('播放偏好未能保存，请重试');
+      _notice('Preferensi pemutaran gagal disimpan. Coba lagi.');
     }
   }
 
@@ -1120,7 +1120,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   void dispose() {
     _closed = true;
     LanController.current?.detachPlayback(_lanIdentity);
-    widget.handoff?.fail('接收端已退出播放');
+    widget.handoff?.fail('Perangkat penerima keluar dari pemutar');
     widget.store.removeListener(_accessChanged);
     _danmaku.dispose();
     _preloader.dispose();
@@ -1209,7 +1209,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     backgroundColor: const Color(0xFF101114),
                     actions: [
                       IconButton(
-                        tooltip: '旋转与全屏',
+                        tooltip: 'Rotasi dan layar penuh',
                         onPressed: _rotate,
                         icon: const Icon(Icons.screen_rotation_alt_rounded),
                       ),
@@ -1347,15 +1347,15 @@ class _PlayerScreenState extends State<PlayerScreen>
           ColoredBox(
             color: Colors.black.withValues(alpha: .9),
             child: StatusPanel(
-              title: '暂时无法播放',
+              title: 'Video belum dapat diputar',
               message: _error!,
               onRetry: () => _retry(),
-              action: _localFailure ? '重试本地播放' : '重试播放',
+              action: _localFailure ? 'Coba putar video lokal lagi' : 'Coba putar lagi',
               secondaryAction: _localFailure && widget.allowOnlineFallback
                   ? TextButton.icon(
                       onPressed: _switchOnline,
                       icon: const Icon(Icons.cloud_outlined),
-                      label: const Text('改为在线播放'),
+                      label: const Text('Beralih ke pemutaran online'),
                     )
                   : !_localFailure &&
                         !widget.localOnly &&
@@ -1376,17 +1376,17 @@ class _PlayerScreenState extends State<PlayerScreen>
               child: Row(
                 children: [
                   IconButton(
-                    tooltip: '退出全屏',
+                    tooltip: 'Keluar dari layar penuh',
                     onPressed: _rotate,
                     icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   const Spacer(),
                   TextButton(
                     onPressed: () => _openPanel(PlayerMenuSection.episodes),
-                    child: const Text('选集'),
+                    child: const Text('Pilih episode'),
                   ),
                   IconButton(
-                    tooltip: '播放设置',
+                    tooltip: 'Pengaturan pemutaran',
                     onPressed: () => _openPanel(PlayerMenuSection.settings),
                     icon: const Icon(Icons.tune_rounded),
                   ),
@@ -1412,7 +1412,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       Text(_saveWarning!, style: const TextStyle(fontSize: 12)),
                       TextButton(
                         onPressed: _saveProgress,
-                        child: const Text('重试保存'),
+                        child: const Text('Coba simpan lagi'),
                       ),
                     ],
                   ),
@@ -1431,7 +1431,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       builder: (context, constraints) => Row(
         children: [
           IconButton(
-            tooltip: '上一集',
+            tooltip: 'Episode sebelumnya',
             onPressed: _index > 0 ? () => _play(_index - 1) : null,
             icon: const Icon(Icons.skip_previous_rounded),
           ),
@@ -1446,7 +1446,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           ),
           IconButton(
-            tooltip: '下一集',
+            tooltip: 'Episode berikutnya',
             onPressed: _index + 1 < widget.detail.episodes.length
                 ? () => _play(_index + 1)
                 : null,
@@ -1470,7 +1470,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           IconButton(
             key: const ValueKey('player-danmaku-settings'),
-            tooltip: '播放设置 · 画质、倍速与弹幕',
+            tooltip: 'Pengaturan pemutaran · Kualitas, kecepatan, dan komentar',
             onPressed: () => _openPanel(PlayerMenuSection.settings),
             icon: const Icon(Icons.tune_rounded),
           ),

@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<SourceGroup> get _sourceGroups {
     final groups = SourceGroup.fromSources(widget.store.sources);
     return [
-      if (groups.length > 1) SourceGroup('all', '全部站源', widget.store.sources),
+      if (groups.length > 1) SourceGroup('all', 'Semua sumber', widget.store.sources),
       ...groups,
     ];
   }
@@ -90,12 +90,12 @@ class _HomeScreenState extends State<HomeScreen> {
         .where((source) => source.onlineSearch)
         .toList();
     if (online.isEmpty) {
-      return '筛选本机已更新剧库';
+      return 'Saring katalog yang sudah diperbarui di perangkat';
     }
     final names = online.map((source) => source.name).join('、');
     return online.length == _group.sources.length
-        ? '搜索${names}短剧'
-        : '搜索${names}及本机剧库';
+        ? 'Cari drama pendek ${names}'
+        : 'Cari ${names} dan katalog lokal';
   }
 
   String get _category => _categorySelections[_group.id] ?? '';
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<CatalogCategory> get _displayCategories => [
     CatalogCategory.all,
     if (_group.id == 'hongguo')
-      const CatalogCategory(_recommendationCategory, '推荐'),
+      const CatalogCategory(_recommendationCategory, 'Rekomendasi'),
     ..._categories.where((entry) => entry.id.isNotEmpty),
   ];
 
@@ -327,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final selection = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('界面模式'),
+        title: const Text('Mode tampilan'),
         children: [
           RadioGroup<String>(
             groupValue: widget.store.displayMode,
@@ -336,9 +336,9 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (final mode in const {
-                  'auto': '自动识别设备',
-                  'television': '电视 / 遥控器',
-                  'standard': '手机 / 电脑',
+                  'auto': 'Otomatis识别设备',
+                  'television': 'TV / remote',
+                  'standard': 'Ponsel / komputer',
                 }.entries)
                   RadioListTile<String>(
                     value: mode.key,
@@ -365,10 +365,10 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (_) => TelevisionSearchDialog(
         initialValue: _search.text,
         title: _group.id == 'all'
-            ? '搜索已开放站源'
+            ? 'Cari sumber yang tersedia'
             : _onlineSearch
-            ? '搜索${_group.name}短剧'
-            : '筛选当前已加载短剧',
+            ? 'Cari drama pendek ${_group.name}'
+            : 'Saring drama yang sudah dimuat',
         recentSearches: widget.store.recentSearches,
         onCancel: () => unawaited(widget.repository.cancelSuggestions()),
         suggestions: _searchSuggestions ? widget.repository.suggestions : null,
@@ -620,7 +620,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedDramas.length >= BatchDownloads.maxDramas) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('一次最多选择 50 部短剧，请分批下载')));
+      ).showSnackBar(const SnackBar(content: Text('Maksimal 50 drama dapat dipilih sekaligus. Unduh dalam beberapa kelompok.')));
       return;
     }
     setState(() {
@@ -735,14 +735,14 @@ class _HomeScreenState extends State<HomeScreen> {
             titleSpacing: 12,
             title: _selectionMode
                 ? const Text(
-                    '选择短剧',
+                    'Pilih drama',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   )
                 : _tab == 0
                 ? PopupMenuButton<SourceGroup>(
                     key: const ValueKey('source-switch'),
-                    tooltip: '切换站源',
+                    tooltip: 'Ganti sumber',
                     enabled: _sourceGroups.length > 1,
                     onSelected: _changeGroup,
                     itemBuilder: (_) => [
@@ -786,25 +786,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: _selectedDramas.isEmpty
                       ? null
                       : () => setState(_selectedDramas.clear),
-                  child: const Text('清空'),
+                  child: const Text('Bersihkan'),
                 ),
                 TextButton(
                   key: const ValueKey('cancel-catalog-selection'),
                   onPressed: _cancelSelection,
-                  child: const Text('取消'),
+                  child: const Text('Batal'),
                 ),
               ] else ...[
                 if (_tab == 1)
                   IconButton(
                     key: const ValueKey('follow-lan-sync'),
-                    tooltip: '追剧同步',
+                    tooltip: 'Sinkronisasi daftar tontonan',
                     onPressed: () => openLanSync(context),
                     icon: const Icon(Icons.sync_rounded),
                   ),
                 if (_tab == 0) ...[
                   if (!_showRecommendations)
                     IconButton(
-                      tooltip: '排序与筛选 · ${widget.store.catalogView.sort.label}',
+                      tooltip: 'Urutkan dan saring · ${widget.store.catalogView.sort.label}',
                       onPressed: _chooseCatalogView,
                       color:
                           widget.store.catalogView.sort != CatalogSort.source ||
@@ -815,7 +815,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   IconButton(
                     key: const ValueKey('open-rankings'),
-                    tooltip: '榜单',
+                    tooltip: 'Peringkat',
                     onPressed: widget.store.sources.isEmpty
                         ? null
                         : _openRankings,
@@ -826,13 +826,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       widget.repository.supportsDownloads)
                     IconButton(
                       key: const ValueKey('select-catalog-dramas'),
-                      tooltip: '多选下载',
+                      tooltip: 'Pilih beberapa untuk diunduh',
                       onPressed: () => setState(() => _selectionMode = true),
                       icon: const Icon(Icons.checklist_rounded),
                     ),
                   IconButton(
                     key: const ValueKey('toggle-search'),
-                    tooltip: _searchVisible ? '收起搜索' : '搜索',
+                    tooltip: _searchVisible ? 'Tutup pencarian' : 'Cari',
                     icon: Icon(
                       _searchVisible
                           ? Icons.search_off_rounded
@@ -853,13 +853,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         _group.sources.any(
                           (source) => _updater.busy(source.id),
                         ),
-                    tooltip: '更新剧库',
+                    tooltip: 'Perbarui katalog',
                     onPressed: widget.store.sources.isEmpty
                         ? null
                         : _refreshCatalog,
                   ),
                 PopupMenuButton<String>(
-                  tooltip: '更多',
+                  tooltip: 'Lainnya',
                   onSelected: (value) {
                     if (value == 'update') {
                       _refreshCatalog();
@@ -895,7 +895,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Color(0xFFFF765F),
                         ),
                         children: [
-                          const Text('独立运行，打开即可浏览和播放。观看记录与追剧收藏保存在当前设备。'),
+                          const Text('Aplikasi berjalan mandiri. Jelajahi dan putar drama; riwayat tontonan dan daftar favorit disimpan di perangkat ini.'),
                         ],
                       );
                     }
@@ -911,19 +911,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             !_group.sources.any(
                               (source) => _updater.busy(source.id),
                             ),
-                        child: const Text('更新剧库'),
+                        child: const Text('Perbarui katalog'),
                       ),
                     if (widget.repository.supportsSourceManagement)
                       const PopupMenuItem(
                         value: 'sources',
-                        child: Text('站源管理'),
+                        child: Text('Kelola sumber'),
                       ),
-                    const PopupMenuItem(value: 'users', child: Text('用户管理')),
+                    const PopupMenuItem(value: 'users', child: Text('Kelola pengguna')),
                     const PopupMenuItem(
                       value: 'settings',
-                      child: Text('设置与备份'),
+                      child: Text('Pengaturan dan cadangan'),
                     ),
-                    const PopupMenuItem(value: 'display', child: Text('界面模式')),
+                    const PopupMenuItem(value: 'display', child: Text('Mode tampilan')),
                     const PopupMenuItem(
                       value: 'about',
                       child: Text('关于$appName'),
@@ -947,11 +947,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           for (final entry in [
-                            (Icons.explore_rounded, '发现'),
-                            (Icons.bookmark_rounded, '追剧'),
-                            (Icons.history_rounded, '最近观看'),
+                            (Icons.explore_rounded, 'Jelajahi'),
+                            (Icons.bookmark_rounded, 'Daftar tontonan'),
+                            (Icons.history_rounded, 'Baru ditonton'),
                             if (widget.store.canDownload)
-                              (Icons.download_rounded, '下载'),
+                              (Icons.download_rounded, 'Unduhan'),
                           ].indexed)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 14),
@@ -979,22 +979,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       NavigationRailDestination(
                         icon: Icon(Icons.explore_outlined),
                         selectedIcon: Icon(Icons.explore),
-                        label: Text('发现'),
+                        label: Text('Jelajahi'),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.bookmark_border_rounded),
                         selectedIcon: Icon(Icons.bookmark_rounded),
-                        label: Text('追剧'),
+                        label: Text('Daftar tontonan'),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.history_rounded),
-                        label: Text('最近观看'),
+                        label: Text('Baru ditonton'),
                       ),
                       if (widget.store.canDownload)
                         NavigationRailDestination(
                           icon: Icon(Icons.download_outlined),
                           selectedIcon: Icon(Icons.download_rounded),
-                          label: Text('下载'),
+                          label: Text('Unduhan'),
                         ),
                     ],
                   ),
@@ -1043,22 +1043,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     NavigationDestination(
                       icon: Icon(Icons.explore_outlined),
                       selectedIcon: Icon(Icons.explore),
-                      label: '发现',
+                      label: 'Jelajahi',
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.bookmark_border_rounded),
                       selectedIcon: Icon(Icons.bookmark_rounded),
-                      label: '追剧',
+                      label: 'Daftar tontonan',
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.history_rounded),
-                      label: '最近观看',
+                      label: 'Baru ditonton',
                     ),
                     if (widget.store.canDownload)
                       NavigationDestination(
                         icon: Icon(Icons.download_outlined),
                         selectedIcon: Icon(Icons.download_rounded),
-                        label: '下载',
+                        label: 'Unduhan',
                       ),
                   ],
                 ),
@@ -1135,7 +1135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 IconButton(
-                  tooltip: '清空最近搜索',
+                  tooltip: 'Bersihkan最近Cari',
                   onPressed: () =>
                       saveUserChange(context, widget.store.clearRecentSearches),
                   icon: const Icon(Icons.delete_outline_rounded, size: 20),
@@ -1208,11 +1208,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: _loading || _loadingMore
                         ? null
                         : () => _load(more: _failedMore, force: true),
-                    child: const Text('重试'),
+                    child: const Text('Coba lagi'),
                   ),
                   if (widget.repository.supportsSourceManagement)
                     IconButton(
-                      tooltip: '站源诊断',
+                      tooltip: 'Diagnostik sumber',
                       onPressed: _manageSources,
                       icon: const Icon(Icons.network_check),
                     ),
@@ -1229,32 +1229,32 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           CircularProgressIndicator(),
                           SizedBox(height: 18),
-                          Text('正在加载剧集'),
+                          Text('Memuat drama'),
                         ],
                       ),
                     )
                   : _items.isEmpty && _error != null
                   ? StatusPanel(
-                      title: '暂时无法加载',
+                      title: 'Belum dapat dimuat',
                       message: _error!,
                       onRetry: () => _load(force: true),
                       secondaryAction:
                           widget.repository.supportsSourceManagement
                           ? TextButton(
                               onPressed: _manageSources,
-                              child: const Text('站源诊断'),
+                              child: const Text('Diagnostik sumber'),
                             )
                           : null,
                       icon: Icons.wifi_off_rounded,
                     )
                   : items.isEmpty
                   ? StatusPanel(
-                      title: '没有找到匹配的短剧',
+                      title: 'Drama yang cocok tidak ditemukan',
                       message: _hideVip
-                          ? '可以换个搜索词，或显示 VIP 内容。'
+                          ? '可以换个Cari词，或显示 Konten VIP。'
                           : widget.store.sources.length > 1
-                          ? '可以换个搜索词或切换站源。'
-                          : '可以换个搜索词，或刷新后重试。',
+                          ? '可以换个Cari词或Ganti sumber。'
+                          : '可以换个Cari词，或刷新后Coba lagi。',
                       onRetry:
                           _hasMore &&
                               !_loadingMore &&
@@ -1265,7 +1265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ))
                           ? () => _load(more: true)
                           : null,
-                      action: '加载更多',
+                      action: '加载Lainnya',
                     )
                   : LayoutBuilder(
                       builder: (context, constraints) {
@@ -1283,11 +1283,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? const CircularProgressIndicator()
                                     : _hasMore
                                     ? RemoteButton(
-                                        label: '加载更多',
+                                        label: '加载Lainnya',
                                         icon: Icons.expand_more,
                                         onPressed: () => _load(more: true),
                                       )
-                                    : const Text('已经看到这里的全部剧集'),
+                                    : const Text('Semua drama yang tersedia sudah ditampilkan'),
                               ),
                             ),
                           );
@@ -1331,10 +1331,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             icon: const Icon(
                                               Icons.expand_more_rounded,
                                             ),
-                                            label: const Text('加载更多'),
+                                            label: const Text('加载Lainnya'),
                                           )
                                         : Text(
-                                            '已经看到这里的全部剧集',
+                                            'Semua drama yang tersedia sudah ditampilkan',
                                             style: TextStyle(
                                               color: Theme.of(
                                                 context,
@@ -1384,7 +1384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      count == 0 ? '点选要下载的短剧' : '已选 $count 部',
+                      count == 0 ? '点选要Unduhan的短剧' : '已选 $count 部',
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -1393,7 +1393,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       count == 0
                           ? '最多 ${BatchDownloads.maxDramas} 部'
-                          : '下一步选择分集和画质',
+                          : 'Berikutnya选择分集和画质',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -1411,7 +1411,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     vertical: 12,
                   ),
                 ),
-                child: const Text('下一步'),
+                child: const Text('Berikutnya'),
               );
               if (constraints.maxWidth < 320 ||
                   MediaQuery.textScalerOf(context).scale(14) > 21) {
@@ -1452,12 +1452,12 @@ class _HomeScreenState extends State<HomeScreen> {
         messages.add('${source.name}：$error');
       } else if (status != null) {
         messages.add(
-          '${source.name}：${status.stage.isEmpty ? '准备更新' : status.stage}'
+          '${source.name}：${status.stage.isEmpty ? 'Menyiapkan pembaruan' : status.stage}'
           '${status.total > 0 ? ' ${status.completed}/${status.total}' : ''}'
           '${!status.running && status.added > 0 ? ' · 新增 ${status.added} 部' : ''}',
         );
       } else if (busy) {
-        messages.add('${source.name}：正在启动');
+        messages.add('${source.name}：Memulai');
       }
     }
     final colors = Theme.of(context).colorScheme;
@@ -1469,7 +1469,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: Text(
-                messages.isEmpty ? '准备更新剧库' : messages.join('；'),
+                messages.isEmpty ? '准备Perbarui katalog' : messages.join('；'),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -1481,16 +1481,16 @@ class _HomeScreenState extends State<HomeScreen> {
             if (busy)
               TextButton(
                 onPressed: () => _updater.stop(sources),
-                child: const Text('停止'),
+                child: const Text('Hentikan'),
               ),
             IconButton(
-              tooltip: '查看更新详情',
+              tooltip: 'Lihat detail pembaruan',
               onPressed: _manageSources,
               icon: const Icon(Icons.info_outline_rounded, size: 20),
             ),
             if (!busy)
               IconButton(
-                tooltip: '收起更新提示',
+                tooltip: 'Tutup pemberitahuan pembaruan',
                 onPressed: () => setState(() => _updateNotice = false),
                 icon: const Icon(Icons.close_rounded, size: 20),
               ),

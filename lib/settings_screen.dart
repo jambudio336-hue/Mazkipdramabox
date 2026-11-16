@@ -46,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final selected = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('外观主题'),
+        title: const Text('Tema tampilan'),
         children: [
           RadioGroup<String>(
             groupValue: widget.store.themeMode,
@@ -59,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: mode,
                     title: Text(AppTheme.label(mode)),
                     subtitle: mode == 'system'
-                        ? const Text('随设备的深色模式自动切换')
+                        ? const Text('随设备的深色模式Otomatis切换')
                         : null,
                   ),
               ],
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           bytes: Uint8List.fromList(utf8.encode(content)),
           mimeType: 'application/json',
         );
-        if (saved != null && mounted) setState(() => _message = '备份已保存');
+        if (saved != null && mounted) setState(() => _message = 'Cadangan berhasil disimpan');
       } else {
         final file = await FilePicker.pickFile(
           type: FileType.custom,
@@ -96,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (file == null || !mounted) return;
         final size = await file.length();
         if (size == null || size > 8 * 1024 * 1024) {
-          throw const FormatException('备份文件过大或无法读取');
+          throw const FormatException('File cadangan terlalu besar atau tidak dapat dibaca');
         }
         final content = utf8.decode(await file.readAsBytes());
         final data = widget.store.validateBackup(content);
@@ -104,18 +104,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final accepted = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('恢复备份？'),
+            title: const Text('Pulihkan cadangan?'),
             content: Text(
-              '包含 ${(data['profiles'] as List).length} 个用户。将替换本机的用户、追剧、观看记录和偏好设置；已下载视频保留。恢复后使用备份内的管理员密码登录。',
+              '包含 ${(data['profiles'] as List).length} 个用户。将替换本机的用户、Daftar tontonan、观看记录和偏好设置；已Unduhan视频保留。Pulihkan后使用备份内的管理员Kata sandiMasuk。',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('取消'),
+                child: const Text('Batal'),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('恢复'),
+                child: const Text('Pulihkan'),
               ),
             ],
           ),
@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: widget.store,
     builder: (_, _) => Scaffold(
-      appBar: AppBar(title: const Text('设置与备份')),
+      appBar: AppBar(title: const Text('Pengaturan dan cadangan')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 720),
@@ -145,16 +145,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 key: const ValueKey('lan-settings'),
                 leading: const Icon(Icons.devices_rounded),
-                title: const Text('设备互联'),
-                subtitle: const Text('局域网自动同步追剧与推送播放'),
+                title: const Text('Koneksi antarperangkat'),
+                subtitle: const Text('局域网Otomatis同步Daftar tontonan与推送Ditonton'),
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => openLanSync(context),
               ),
               if (widget.repository.supportsSourceManagement)
                 ListTile(
                   leading: const Icon(Icons.dns_outlined),
-                  title: const Text('站源管理'),
-                  subtitle: const Text('独立更新、连接与播放检测'),
+                  title: const Text('Kelola sumber'),
+                  subtitle: const Text('独立更新、连接与Ditonton检测'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => Navigator.push(
                     context,
@@ -169,14 +169,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 key: const ValueKey('theme-setting'),
                 leading: const Icon(Icons.palette_outlined),
-                title: const Text('外观主题'),
+                title: const Text('Tema tampilan'),
                 subtitle: Text(AppTheme.label(widget.store.themeMode)),
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: _chooseTheme,
               ),
               ListTile(
                 leading: const Icon(Icons.people_outline),
-                title: const Text('用户管理'),
+                title: const Text('Kelola pengguna'),
                 subtitle: Text('当前：${widget.store.profile.name}'),
                 onTap: () => Navigator.push(
                   context,
@@ -188,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (widget.store.canDownload)
                 ListTile(
                   leading: const Icon(Icons.download_outlined),
-                  title: const Text('下载偏好'),
+                  title: const Text('Unduhan偏好'),
                   subtitle: Text(widget.store.downloadPreferences.qualityLabel),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => Navigator.push(
@@ -202,8 +202,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (widget.store.canDownload)
                 ListTile(
                   leading: const Icon(Icons.folder_outlined),
-                  title: const Text('下载目录与空间'),
-                  subtitle: const Text('查看存储用量、迁移已下载文件'),
+                  title: const Text('Unduhan目录与空间'),
+                  subtitle: const Text('查看存储用量、迁移已Unduhan文件'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute<void>(
@@ -217,8 +217,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (widget.store.profile.admin) ...[
                 ListTile(
                   leading: const Icon(Icons.settings_ethernet_rounded),
-                  title: const Text('网络与资源'),
-                  subtitle: const Text('代理、目录请求间隔、下载并发与站源目录'),
+                  title: const Text('Jaringan dan sumber daya'),
+                  subtitle: const Text('代理、目录请求间隔、Unduhan并发与站源目录'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => Navigator.push(
                     context,
@@ -232,9 +232,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SwitchListTile(
                   value: widget.store.autoExport,
-                  title: const Text('下载完成后自动导出 Emby'),
+                  title: const Text('Unduhan完成后Otomatis导出 Emby'),
                   subtitle: const Text(
-                    '在下载目录的 exports 中生成视频和海报 URL 元数据，可将该目录加入 Emby 媒体库。',
+                    '在Unduhan目录的 exports 中生成视频和海报 URL 元数据，可将该目录加入 Emby 媒体库。',
                   ),
                   onChanged: _busy
                       ? null
@@ -253,7 +253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SwitchListTile(
                   value: widget.store.exportPosters,
-                  title: const Text('同时导出海报文件'),
+                  title: const Text('Ekspor file poster juga'),
                   subtitle: const Text('默认只写海报 URL。源站海报需要解密或外部读取失败时可开启。'),
                   onChanged: _busy
                       ? null
@@ -264,20 +264,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.backup_outlined),
-                  title: const Text('导出配置备份'),
-                  subtitle: const Text('包含本地用户、追剧、历史和设置，不含视频文件'),
+                  title: const Text('Ekspor cadangan konfigurasi'),
+                  subtitle: const Text('包含本地用户、Daftar tontonan、历史和设置，不含视频文件'),
                   onTap: _busy ? null : () => _backup(false),
                 ),
                 ListTile(
                   leading: const Icon(Icons.restore),
-                  title: const Text('恢复配置备份'),
+                  title: const Text('Pulihkan配置备份'),
                   onTap: _busy ? null : () => _backup(true),
                 ),
               ],
               if (Platform.isIOS)
                 const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text('iOS 下载和媒体处理需要保持应用在前台；切到后台会暂停，回到前台后可继续。'),
+                  child: Text('iOS Unduhan和媒体处理需要保持应用在前台；切到后台会暂停，回到前台后可继续。'),
                 ),
               if (_busy) const LinearProgressIndicator(),
               if (_message != null)
@@ -349,7 +349,7 @@ class _StorageScreenState extends State<StorageScreen> {
       parent = await showDialog<String>(
         context: context,
         builder: (context) => SimpleDialog(
-          title: const Text('选择下载位置'),
+          title: const Text('选择Unduhan位置'),
           children: [
             for (final entry in directories.entries)
               SimpleDialogOption(
@@ -360,20 +360,20 @@ class _StorageScreenState extends State<StorageScreen> {
         ),
       );
     } else {
-      parent = await FilePicker.getDirectoryPath(dialogTitle: '选择下载保存位置');
+      parent = await FilePicker.getDirectoryPath(dialogTitle: '选择UnduhanSimpan位置');
     }
     if (parent == null || !mounted) return;
     final yes = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('迁移已下载内容？'),
+        title: const Text('迁移已Unduhan内容？'),
         content: Text(
-          '将视频、合并成品及导出内容迁移到：\n$parent\n\n下载会先暂停，复制成功后清理旧目录。请保证目标有足够空间，并在完成后继续下载。',
+          '将视频、合并成品及导出内容迁移到：\n$parent\n\nUnduhan会先暂停，复制成功后清理旧目录。请保证目标有足够空间，并在完成后继续Unduhan。',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: const Text('Batal'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
@@ -401,7 +401,7 @@ class _StorageScreenState extends State<StorageScreen> {
   Widget build(BuildContext context) => PopScope(
     canPop: !_busy,
     child: Scaffold(
-      appBar: AppBar(title: const Text('下载目录与空间')),
+      appBar: AppBar(title: const Text('Unduhan目录与空间')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 720),
@@ -418,7 +418,7 @@ class _StorageScreenState extends State<StorageScreen> {
                   '剩余 ${storageSize((_info!['free'] as num?)?.toInt() ?? -1)} · ${_info!['files'] ?? 0} 个文件',
                 ),
                 const SizedBox(height: 24),
-                const Text('当前下载目录'),
+                const Text('当前Unduhan目录'),
                 const SizedBox(height: 8),
                 SelectableText(_info!['directory'] as String? ?? ''),
                 TextButton.icon(
@@ -426,10 +426,10 @@ class _StorageScreenState extends State<StorageScreen> {
                     ClipboardData(text: _info!['directory'] as String? ?? ''),
                   ),
                   icon: const Icon(Icons.copy),
-                  label: const Text('复制路径'),
+                  label: const Text('Salin jalur'),
                 ),
                 const SizedBox(height: 20),
-                const Text('在下载页删除不需要的分集，在本地媒体页删除合并成品或 Emby 导出，可释放空间。'),
+                const Text('在Unduhan页Hapus不需要的分集，在本地媒体页Hapus合并成品或 Emby 导出，可释放空间。'),
               ],
               if (_busy || (_info == null && _error == null))
                 const Padding(
@@ -450,7 +450,7 @@ class _StorageScreenState extends State<StorageScreen> {
                 ),
               TextButton(
                 onPressed: _busy ? null : _refresh,
-                child: const Text('刷新用量'),
+                child: const Text('Perbarui penggunaan'),
               ),
             ],
           ),

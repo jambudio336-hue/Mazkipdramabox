@@ -45,7 +45,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         if (file == null || !mounted) return;
         final size = await file.length();
         if (size == null || size > 8 * 1024 * 1024) {
-          throw const FormatException('备份文件过大或无法读取');
+          throw const FormatException('File cadangan terlalu besar atau tidak dapat dibaca');
         }
         final content = utf8.decode(await file.readAsBytes());
         widget.store.validateBackup(content);
@@ -53,18 +53,18 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         final accepted = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('从备份恢复用户与记录？'),
+            title: const Text('从备份Pulihkan用户与记录？'),
             content: const Text(
-              '将使用这份备份替换损坏的用户配置、追剧、观看记录和偏好。建议先导出原始配置；已下载视频保留。',
+              '将使用这份备份替换损坏的用户配置、Daftar tontonan、观看记录和偏好。建议先Ekspor konfigurasi asli；已Unduhan视频保留。',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('取消'),
+                child: const Text('Batal'),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('继续恢复'),
+                child: const Text('继续Pulihkan'),
               ),
             ],
           ),
@@ -72,7 +72,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         if (accepted != true || !mounted) return;
         final pin = await showDialog<String>(
           context: context,
-          builder: (_) => const _PasswordDialog(name: '管理员（原配置或备份中的密码）'),
+          builder: (_) => const _PasswordDialog(name: '管理员（原配置或备份中的Kata sandi）'),
         );
         if (pin == null || !mounted) return;
         await widget.store.recoverBackup(content, pin: pin);
@@ -119,19 +119,19 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
   }
 
   String _permissionsLabel(LocalProfile profile) {
-    if (profile.admin) return '管理员 · 全部权限';
+    if (profile.admin) return 'Administrator · semua izin';
     final sources = profile.sources
         .where(SourceSite.isAvailable)
         .map((id) => SourceSite.byId(id).name)
         .join(' / ');
-    return '${sources.isEmpty ? '未开放站源' : sources} · ${profile.download ? '可下载' : '仅在线观看'}';
+    return '${sources.isEmpty ? 'Sumber belum dibuka' : sources} · ${profile.download ? '可Unduhan' : 'Hanya menonton online'}';
   }
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: widget.store,
     builder: (_, _) => Scaffold(
-      appBar: AppBar(title: Text(widget.locked ? '解锁$appName' : '用户管理')),
+      appBar: AppBar(title: Text(widget.locked ? '解锁$appName' : 'Kelola pengguna')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 720),
@@ -139,32 +139,32 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
             padding: const EdgeInsets.all(20),
             children: [
               if (widget.store.configurationError != null) ...[
-                Text('需要恢复本地配置', style: Theme.of(context).textTheme.titleLarge),
+                Text('需要Pulihkan本地配置', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 Text(widget.store.configurationError!),
                 const SizedBox(height: 12),
                 FilledButton.icon(
                   onPressed: _busy ? null : () => _recover(),
                   icon: const Icon(Icons.restore_rounded),
-                  label: const Text('从备份恢复'),
+                  label: const Text('从备份Pulihkan'),
                 ),
                 OutlinedButton(
                   onPressed: _busy ? null : () => _recover(export: true),
-                  child: const Text('导出原始配置'),
+                  child: const Text('Ekspor konfigurasi asli'),
                 ),
                 TextButton(
                   onPressed: _busy ? null : () => _recover(reload: true),
-                  child: const Text('重新读取配置'),
+                  child: const Text('Muat ulang konfigurasi'),
                 ),
               ] else ...[
                 Text(
                   widget.locked
-                      ? '选择用户并输入密码'
+                      ? 'Pilih pengguna dan masukkan kata sandi'
                       : '当前用户：${widget.store.profile.name}',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                const Text('各用户的追剧和观看记录独立保存，下载文件由本机共享。'),
+                const Text('各用户的Daftar tontonan和观看记录独立Simpan，Unduhan文件由本机共享。'),
               ],
               if (_busy)
                 const Padding(
@@ -198,7 +198,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                     onTap: _busy ? null : () => _switch(profile),
                     trailing: !widget.store.locked && widget.store.profile.admin
                         ? IconButton(
-                            tooltip: '编辑用户',
+                            tooltip: 'Edit pengguna',
                             onPressed: _busy ? null : () => _edit(profile),
                             icon: const Icon(Icons.edit_outlined),
                           )
@@ -214,7 +214,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                 FilledButton.icon(
                   onPressed: _busy ? null : () => _edit(),
                   icon: const Icon(Icons.person_add_outlined),
-                  label: const Text('添加用户'),
+                  label: const Text('Tambah pengguna'),
                 ),
               ],
               if (!widget.store.locked && widget.store.profile.protected)
@@ -224,7 +224,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                     widget.store.lock();
                   },
                   icon: const Icon(Icons.lock_outline),
-                  label: const Text('锁定当前用户'),
+                  label: const Text('Kunci pengguna saat ini'),
                 ),
             ],
           ),
@@ -251,22 +251,22 @@ class _PasswordDialogState extends State<_PasswordDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text('登录 ${widget.name}'),
+    title: Text('Masuk ${widget.name}'),
     content: TextField(
       controller: _pin,
       autofocus: true,
       obscureText: true,
-      decoration: const InputDecoration(labelText: '密码'),
+      decoration: const InputDecoration(labelText: 'Kata sandi'),
       onSubmitted: (value) => Navigator.pop(context, value),
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: const Text('Batal'),
       ),
       FilledButton(
         onPressed: () => Navigator.pop(context, _pin.text),
-        child: const Text('登录'),
+        child: const Text('Masuk'),
       ),
     ],
   );
@@ -303,7 +303,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
       _busy = true;
     });
     try {
-      if (_pin.text != _confirm.text) throw StateError('两次输入的密码不一致');
+      if (_pin.text != _confirm.text) throw StateError('两次输入的Kata sandi不一致');
       await widget.store.saveProfile(
         id: widget.profile?.id,
         name: _name.text,
@@ -327,16 +327,16 @@ class _ProfileEditorState extends State<ProfileEditor> {
     final yes = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('删除此用户？'),
-        content: const Text('会同时删除该用户的追剧和观看记录。下载文件会保留。'),
+        title: const Text('Hapus pengguna ini?'),
+        content: const Text('会同时Hapus该用户的Daftar tontonan和观看记录。Unduhan文件会保留。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: const Text('Batal'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('删除'),
+            child: const Text('Hapus'),
           ),
         ],
       ),
@@ -352,7 +352,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.profile == null ? '添加用户' : '编辑用户')),
+    appBar: AppBar(title: Text(widget.profile == null ? 'Tambah pengguna' : 'Edit pengguna')),
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640),
@@ -362,34 +362,34 @@ class _ProfileEditorState extends State<ProfileEditor> {
             TextField(
               controller: _name,
               maxLength: 40,
-              decoration: const InputDecoration(labelText: '用户名'),
+              decoration: const InputDecoration(labelText: 'Nama pengguna'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _pin,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: '设置密码（至少 6 位）',
-                helperText: '留空保留原密码',
+                labelText: '设置Kata sandi（至少 6 位）',
+                helperText: '留空保留原Kata sandi',
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _confirm,
               obscureText: true,
-              decoration: const InputDecoration(labelText: '再次输入密码'),
+              decoration: const InputDecoration(labelText: '再次输入Kata sandi'),
             ),
             if (widget.profile?.protected == true &&
                 widget.profile?.admin != true)
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('取消此用户密码'),
+                title: const Text('Batal此用户Kata sandi'),
                 value: _clearPin,
                 onChanged: (v) => setState(() => _clearPin = v!),
               ),
             const SizedBox(height: 20),
             if (widget.profile?.admin != true) ...[
-              Text('允许访问的站源', style: Theme.of(context).textTheme.titleMedium),
+              Text('Izinkan akses ke sumber', style: Theme.of(context).textTheme.titleMedium),
               for (final source in SourceSite.values)
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
@@ -408,13 +408,13 @@ class _ProfileEditorState extends State<ProfileEditor> {
                 ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('允许下载和本地媒体'),
-                subtitle: Text(_download ? '可下载、合并和导出' : '仅在线观看，隐藏下载入口'),
+                title: const Text('允许Unduhan和本地媒体'),
+                subtitle: Text(_download ? '可Unduhan、合并和导出' : 'Hanya menonton online，隐藏Unduhan入口'),
                 value: _download,
                 onChanged: (v) => setState(() => _download = v),
               ),
             ] else
-              const Text('管理员可以访问全部站源和功能。创建其他用户前需要先设置管理员密码。'),
+              const Text('管理员可以访问Semua sumber和功能。创建其他用户前需要先设置管理员Kata sandi。'),
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -426,12 +426,12 @@ class _ProfileEditorState extends State<ProfileEditor> {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _busy ? null : _save,
-              child: Text(_busy ? '正在保存…' : '保存'),
+              child: Text(_busy ? '正在Simpan…' : 'Simpan'),
             ),
             if (widget.profile != null && !widget.profile!.admin)
               TextButton(
                 onPressed: _busy ? null : _delete,
-                child: const Text('删除用户'),
+                child: const Text('Hapus用户'),
               ),
           ],
         ),
