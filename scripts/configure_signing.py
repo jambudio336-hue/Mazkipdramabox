@@ -40,7 +40,7 @@ if all(values):
     store_password, key_alias, key_password = values[1], values[2], values[3]
     print('已配置固定 Android 发布签名。')
 else:
-    # CI fallback is intentionally a disposable test key, never a production identity.
+    # Disposable CI key: suitable for installing a test APK, not production updates.
     subprocess.run([
         'keytool', '-genkeypair', '-noprompt',
         '-keystore', str(debug_key),
@@ -60,23 +60,29 @@ else:
 def escape(value):
     result = ''
     for character in value:
-        if character in '\\\\:=#! ':
-            result += '\\\\' + character
-        elif character == '\\n':
-            result += '\\\\n'
-        elif character == '\\r':
-            result += '\\\\r'
-        elif character == '\\t':
-            result += '\\\\t'
+        if character in '\\:=#! ':
+            result += '\\' + character
+        elif character == '\n':
+            result += '\\n'
+        elif character == '\r':
+            result += '\\r'
+        elif character == '\t':
+            result += '\\t'
         elif ord(character) > 126:
             encoded = character.encode('utf-16-be')
-            result += ''.join('\\\\u' + encoded[i:i + 2].hex() for i in range(0, len(encoded), 2))
+            result += ''.join('\\u' + encoded[i:i + 2].hex() for i in range(0, len(encoded), 2))
         else:
             result += character
     return result
 
-properties = {'storeFile': store_file.as_posix(), 'storePassword': store_password,
-              'keyAlias': key_alias, 'keyPassword': key_password}
-properties_file.write_text(''.join(name + '=' + escape(value) + '\\n'
-                                for name, value in properties.items()), encoding='ascii')
+properties = {
+    'storeFile': store_file.as_posix(),
+    'storePassword': store_password,
+    'keyAlias': key_alias,
+    'keyPassword': key_password,
+}
+properties_file.write_text(
+    ''.join(f'{name}={escape(value)}\n' for name, value in properties.items()),
+    encoding='ascii',
+)
 properties_file.chmod(0o600)
