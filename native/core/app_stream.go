@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/hex"
 	"errors"
 	"io"
@@ -50,7 +51,25 @@ type nativeStreamServer struct {
 func (stream *nativeStreamServer) nativeRequest(request *http.Request) (*http.Response, error) {
 	client := *stream.downloader.client
 	client.Timeout = 0
-	return stream.downloader.doMediaRequestWithClient(request, &client)
+	response, err := stream.downloader.doMediaRequestWithClient(request, &client)
+	if err == nil || !strings.Contains(strings.ToLower(err.Error()), "no application protocol") {
+		return response, err
+	}
+
+	// A small number of media CDNs reject ALPN negotiation when the Go
+	// transport offers HTTP/2. Retry only this specific handshake failure
+	// over HTTP/1.1; keep the downloader's normal transport for other hosts.
+	transport, ok := client.Transport.(*http.Transport)
+	if !ok {
+		return nil, err
+	}
+	fallbackTransport := transport.Clone()
+	fallbackTransport.ForceAttemptHTTP2 = false
+	fallbackTransport.TLSNextProto = map[string]func(string, *tls.Conn) http.RoundTripper{}
+	defer fallbackTransport.CloseIdleConnections()
+	fallbackClient := client
+	fallbackClient.Transport = fallbackTransport
+	return stream.downloader.doMediaRequestWithClient(request, &fallbackClient)
 }
 
 var nativePlaylistURI = regexp.MustCompile(`URI="([^"]+)"`)
