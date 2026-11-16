@@ -9,7 +9,7 @@ import 'models.dart';
 import 'source_status.dart';
 
 String sourceTimestamp(DateTime? value) {
-  if (value == null) return '尚无记录';
+  if (value == null) return 'Belum ada riwayat';
   final local = value.toLocal();
   String two(int number) => number.toString().padLeft(2, '0');
   return '${local.month}/${local.day} ${two(local.hour)}:${two(local.minute)}';
@@ -134,12 +134,12 @@ class _SourcesScreenState extends State<SourcesScreen> {
   Future<void> _copy(SourceSite source, SourceStatus status) async {
     final text = StringBuffer('${source.name}\n');
     text.writeln(
-      '缓存 ${status.count} 部，更新 ${sourceTimestamp(status.updatedAt)}',
+      'Cache ${status.count} 部，更新 ${sourceTimestamp(status.updatedAt)}',
     );
     final health = status.health;
     if (health != null) {
       text.writeln('${health.label} · ${sourceTimestamp(health.checkedAt)}');
-      if (health.sample.isNotEmpty) text.writeln('检测剧集：${health.sample}');
+      if (health.sample.isNotEmpty) text.writeln('Episode uji：${health.sample}');
       for (final step in health.steps) {
         text.writeln('${step.name}：${step.message}');
         text.writeln(
@@ -154,7 +154,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
     if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('诊断信息已复制')));
+      ).showSnackBar(const SnackBar(content: Text('Informasi diagnostik disalin')));
     }
   }
 
@@ -169,7 +169,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
           return aFirst.compareTo(bFirst);
         });
       return Scaffold(
-        appBar: AppBar(title: const Text('站源管理')),
+        appBar: AppBar(title: const Text('Kelola sumber')),
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 960),
@@ -181,13 +181,13 @@ class _SourcesScreenState extends State<SourcesScreen> {
                   const Padding(
                     padding: EdgeInsets.only(bottom: 16),
                     child: Text(
-                      '各站源可分别更新和检测。更新会查找新剧、继续加载一页历史内容，并分批补齐资料；离开此页后任务继续。',
+                      'Setiap sumber dapat diperbarui dan diperiksa secara terpisah. Pembaruan mencari drama baru, memuat riwayat satu halaman, dan melengkapi informasi secara bertahap. Tugas tetap berjalan saat halaman ditutup.',
                     ),
                   ),
                   if (sources.isEmpty)
                     const Padding(
                       padding: EdgeInsets.all(24),
-                      child: Text('当前用户没有可用站源'),
+                      child: Text('Pengguna ini tidak memiliki sumber yang tersedia'),
                     ),
                   for (final group in SourceGroup.fromSources(sources))
                     if (group.id == 'huangguo')
@@ -199,7 +199,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
                             (source) => source.id == widget.initialSource,
                           ),
                           leading: const Icon(Icons.hub_outlined),
-                          title: const Text('黄果'),
+                          title: const Text('Huangguo'),
                           subtitle: Text(
                             '${group.sources.length} 个入口 · ${group.sources.fold<int>(0, (count, source) => count + (_statuses[source.id]?.count ?? 0))} 部',
                           ),
@@ -275,12 +275,12 @@ class _SourcesScreenState extends State<SourcesScreen> {
                   key: ValueKey('check-${source.id}'),
                   onPressed: enabled ? () => _run(source, 'check') : null,
                   icon: const Icon(Icons.network_check),
-                  label: const Text('检测连接与播放'),
+                  label: const Text('Periksa koneksi dan pemutaran'),
                 ),
                 if (status?.running == true)
                   TextButton(
                     onPressed: pending ? null : () => _run(source, 'cancel'),
-                    child: const Text('停止'),
+                    child: const Text('Hentikan'),
                   ),
                 PopupMenuButton<String>(
                   tooltip: '${source.name}更多操作',
@@ -290,18 +290,18 @@ class _SourcesScreenState extends State<SourcesScreen> {
                     PopupMenuItem(
                       value: 'more',
                       enabled: status?.hasMore ?? true,
-                      child: const Text('继续加载一页'),
+                      child: const Text('Muat satu halaman lagi'),
                     ),
-                    const PopupMenuItem(value: 'metadata', child: Text('补齐资料')),
+                    const PopupMenuItem(value: 'metadata', child: Text('Lengkapi informasi')),
                     if (source.id == 'huangdou')
                       PopupMenuItem(
                         value: 'vipMetadata',
                         enabled: (status?.unknownVip ?? 0) > 0,
-                        child: Text('补齐 VIP 资料（${status?.unknownVip ?? 0} 部）'),
+                        child: Text('Lengkapi informasi VIP（${status?.unknownVip ?? 0} 部）'),
                       ),
                     const PopupMenuItem(
                       value: 'checkCatalog',
-                      child: Text('仅检测目录'),
+                      child: Text('Periksa katalog saja'),
                     ),
                   ],
                 ),
@@ -316,7 +316,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '${status?.stage ?? '准备中'}${(status?.total ?? 0) > 0 ? ' · ${status!.completed}/${status.total}' : ''}',
+                '${status?.stage ?? 'Menyiapkan'}${(status?.total ?? 0) > 0 ? ' · ${status!.completed}/${status.total}' : ''}',
               ),
             ] else if (status != null && status.stage.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -328,7 +328,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  '请在 $seconds 秒后重试',
+                  'Coba lagi dalam $seconds detik',
                   style: TextStyle(color: colors.error),
                 ),
               ),
@@ -357,7 +357,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
                           ? () => _run(source, 'retrySave')
                           : null,
                       icon: const Icon(Icons.save_outlined),
-                      label: const Text('重试保存'),
+                      label: const Text('Coba simpan lagi'),
                     ),
                   ],
                 ),
@@ -370,7 +370,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
                     child: Semantics(
                       expanded: healthExpanded,
                       child: Tooltip(
-                        message: healthExpanded ? '收起检测详情' : '展开检测详情',
+                        message: healthExpanded ? 'Tutup detail pemeriksaan' : 'Buka detail pemeriksaan',
                         child: TextButton(
                           key: ValueKey('health-toggle-${source.id}'),
                           onPressed: () => setState(() {
@@ -416,14 +416,14 @@ class _SourcesScreenState extends State<SourcesScreen> {
                     ),
                   ),
                   IconButton(
-                    tooltip: '复制诊断信息',
+                    tooltip: 'Salin informasi diagnostik',
                     onPressed: () => _copy(source, status!),
                     icon: const Icon(Icons.copy_rounded),
                   ),
                 ],
               ),
               if (healthExpanded) ...[
-                if (health.sample.isNotEmpty) Text('检测剧集：${health.sample}'),
+                if (health.sample.isNotEmpty) Text('Episode uji：${health.sample}'),
                 for (final step in health.steps)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
@@ -459,7 +459,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
               ],
             ] else ...[
               const SizedBox(height: 12),
-              const Text('尚未检测连接'),
+              const Text('Koneksi belum diperiksa'),
             ],
           ],
         ),
@@ -493,6 +493,6 @@ class SourceDiagnosticsButton extends StatelessWidget {
       ),
     ),
     icon: const Icon(Icons.network_check),
-    label: const Text('站源诊断'),
+    label: const Text('Diagnostik sumber'),
   );
 }

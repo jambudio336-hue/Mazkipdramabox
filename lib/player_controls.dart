@@ -395,7 +395,7 @@ class _PlayerControlsState extends State<PlayerControls> {
                                       if (!widget.swipeEnabled)
                                         IconButton(
                                           tooltip: state.volume == 0
-                                              ? '取消静音'
+                                              ? 'Batal静音'
                                               : '静音',
                                           onPressed: widget.enabled
                                               ? widget.interactions.toggleMute
@@ -449,7 +449,7 @@ class _PlayerControlsState extends State<PlayerControls> {
                                               Icons.grid_view_rounded,
                                               size: 18,
                                             ),
-                                            label: const Text('选集'),
+                                            label: const Text('Pilih episode'),
                                           ),
                                         ],
                                       ),

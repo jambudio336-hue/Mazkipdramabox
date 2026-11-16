@@ -74,7 +74,7 @@ class _PlayerMenuState extends State<PlayerMenu> {
     final size = MediaQuery.sizeOf(context);
     final landscape = size.width > size.height;
     final title = switch (widget.section) {
-      PlayerMenuSection.episodes => '选集 · 共 ${widget.episodes.length} 集',
+      PlayerMenuSection.episodes => 'Pilih episode · 共 ${widget.episodes.length} 集',
       PlayerMenuSection.speed => '播放倍速',
       PlayerMenuSection.quality => '清晰度',
       PlayerMenuSection.settings => '播放设置',
@@ -276,7 +276,7 @@ class _PlayerMenuState extends State<PlayerMenu> {
                   ? Icons.bookmark_rounded
                   : Icons.bookmark_border_rounded,
             ),
-            label: Text(widget.favorite ? '取消追剧' : '加入追剧'),
+            label: Text(widget.favorite ? 'Batal追剧' : '加入追剧'),
           ),
           const SizedBox(height: 20),
           Text(

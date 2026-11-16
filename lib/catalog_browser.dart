@@ -6,12 +6,12 @@ import 'models.dart';
 String categoryName(String name) {
   final compact = name.trim().replaceAll(RegExp(r'\s+'), '');
   return switch (compact) {
-    'AI成人短剧' || 'AI短剧' => 'AI 短剧',
-    'AI成人漫剧' || 'AI漫剧' => 'AI 漫剧',
-    'AI换脸' => 'AI 换脸',
-    'AI魔改' => 'AI 魔改',
-    'AI剧' => 'AI 剧',
-    '' => '未分类',
+    'Drama pendek AI' || 'Drama pendek AI' => 'AI 短剧',
+    'Komik drama AI' || 'Komik drama AI' => 'AI 漫剧',
+    'Ganti wajah AI' => 'AI 换脸',
+    'Modifikasi AI' => 'AI 魔改',
+    'Drama AI' => 'AI 剧',
+    '' => 'Tanpa kategori',
     _ => name.trim(),
   };
 }
@@ -115,7 +115,7 @@ class CatalogBrowser {
         failures.add(source.groupName);
       }
     });
-    return failures.isEmpty ? null : '部分分类暂未加载，点击重试';
+    return failures.isEmpty ? null : 'Sebagian kategori belum dimuat. Ketuk untuk mencoba lagi';
   }
 
   List<_CatalogChoice> _choices(SourceGroup group) {
@@ -165,14 +165,14 @@ class CatalogBrowser {
     void Function(CatalogPage)? onCached,
   }) async {
     if (cacheOnly && (more || force || query.trim().isNotEmpty)) {
-      throw AppFailure('缓存读取不能同时请求搜索或续页');
+      throw AppFailure('Cache读取不能同时请求搜索或续页');
     }
     final request = ++_generation;
     for (final session in _sessions.values) {
       session.generation++;
     }
     await repository.cancelCatalog();
-    if (request != _generation) throw AppFailure('已取消加载');
+    if (request != _generation) throw AppFailure('已Batal加载');
     final choice = query.isEmpty ? _choice(group, category) : null;
     final requests = choice != null && !choice.category.local
         ? choice.requests

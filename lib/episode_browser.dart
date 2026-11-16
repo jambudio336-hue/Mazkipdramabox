@@ -16,7 +16,7 @@ class EpisodeRangeBar extends StatelessWidget {
     required this.page,
     required this.onLocate,
     this.currentNumber,
-    this.title = '选集',
+    this.title = 'Pilih episode',
   });
   final List<Episode> episodes;
   final int page;
@@ -37,28 +37,28 @@ class EpisodeRangeBar extends StatelessWidget {
               (episode) => episode.number == number,
             );
             if (found < 0) {
-              setState(() => error = '没有找到这一集，请输入已有集数');
+              setState(() => error = 'Episode tidak ditemukan. Masukkan nomor episode yang tersedia');
             } else {
               Navigator.pop(context, found);
             }
           }
 
           return AlertDialog(
-            title: const Text('跳转到指定集数'),
+            title: const Text('Lompat ke episode tertentu'),
             content: TextField(
               controller: controller,
               autofocus: true,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(labelText: '集数', errorText: error),
+              decoration: InputDecoration(labelText: 'Nomor episode', errorText: error),
               onSubmitted: (_) => submit(),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('取消'),
+                child: const Text('Batal'),
               ),
-              FilledButton(onPressed: submit, child: const Text('定位')),
+              FilledButton(onPressed: submit, child: const Text('Buka')),
             ],
           );
         },
@@ -90,10 +90,10 @@ class EpisodeRangeBar extends StatelessWidget {
               if (current >= 0)
                 TextButton(
                   onPressed: () => onLocate(current),
-                  child: const Text('定位当前'),
+                  child: const Text('Buka当前'),
                 ),
               IconButton(
-                tooltip: '跳转集数',
+                tooltip: '跳转Nomor episode',
                 onPressed: episodes.isEmpty ? null : () => _jump(context),
                 icon: const Icon(Icons.pin_outlined),
               ),
@@ -103,7 +103,7 @@ class EpisodeRangeBar extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  tooltip: '上一组选集',
+                  tooltip: '上一组Pilih episode',
                   onPressed: page > 0
                       ? () => onLocate((page - 1) * episodePageSize)
                       : null,
@@ -131,7 +131,7 @@ class EpisodeRangeBar extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  tooltip: '下一组选集',
+                  tooltip: '下一组Pilih episode',
                   onPressed: page + 1 < count
                       ? () => onLocate((page + 1) * episodePageSize)
                       : null,
@@ -153,7 +153,7 @@ class EpisodeBrowser extends StatefulWidget {
     this.currentNumber,
     this.selectedNumbers,
     this.keyPrefix = 'episode',
-    this.title = '选集',
+    this.title = 'Pilih episode',
   });
   final List<Episode> episodes;
   final ValueChanged<int> onSelected;
