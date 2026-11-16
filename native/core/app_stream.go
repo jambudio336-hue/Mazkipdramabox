@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/rand"
@@ -302,8 +303,18 @@ func (stream *nativeStreamServer) nativeServe(writer http.ResponseWriter, reques
 		writer.WriteHeader(http.StatusOK)
 		return
 	}
+
+	// Some providers serve HLS manifests from extensionless URLs and label
+	// them application/octet-stream. Sniff the response body before forwarding
+	// it, otherwise the player receives raw M3U8 text as if it were an MP4.
+	bodyReader := bufio.NewReader(response.Body)
+	if request.Method == http.MethodGet && !playlist {
+		prefix, _ := bodyReader.Peek(10)
+		probe := strings.TrimSpace(strings.TrimPrefix(string(prefix), "\ufeff"))
+		playlist = strings.HasPrefix(probe, "#EXTM3U")
+	}
 	if playlist && request.Method == http.MethodGet {
-		body, err := io.ReadAll(io.LimitReader(response.Body, 4<<20+1))
+		body, err := io.ReadAll(io.LimitReader(bodyReader, 4<<20+1))
 		if err != nil || len(body) > 4<<20 {
 			http.Error(writer, "播放列表过大或读取失败", http.StatusBadGateway)
 			return
@@ -329,6 +340,6 @@ func (stream *nativeStreamServer) nativeServe(writer http.ResponseWriter, reques
 	}
 	writer.WriteHeader(response.StatusCode)
 	if request.Method == http.MethodGet {
-		_, _ = io.Copy(writer, response.Body)
+		_, _ = io.Copy(writer, bodyReader)
 	}
 }
