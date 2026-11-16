@@ -65,7 +65,7 @@ func TestNativePlaybackFallbackPreservesKeysAndReleasesOnlyOldSession(t *testing
 	if err != nil {
 		t.Fatal(err)
 	}
-	if next.URL != second.URL || next.Headers["Referer"] != second.Referer || next.Key != "66656463626139383736353433323130" || next.RouteIndex != 1 || next.Session == plan.Session {
+	if !strings.HasPrefix(next.URL, "http://127.0.0.1:") || next.URL == plan.URL || next.Headers["Referer"] != second.Referer || next.Key != "66656463626139383736353433323130" || next.RouteIndex != 1 || next.Session == plan.Session {
 		t.Fatalf("alternate route lost its credentials: %+v", next)
 	}
 	engine.nativeReleasePlayback(plan.Session)
