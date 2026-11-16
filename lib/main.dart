@@ -201,8 +201,8 @@ class DuanjuApp extends StatelessWidget {
     navigatorKey: navigatorKey,
     title: appName,
     debugShowCheckedModeBanner: false,
-    locale: const Locale('zh', 'CN'),
-    supportedLocales: const [Locale('zh', 'CN')],
+    locale: const Locale('id', 'ID'),
+    supportedLocales: const [Locale('id', 'ID')],
     localizationsDelegates: GlobalMaterialLocalizations.delegates,
     theme: AppTheme.light,
     darkTheme: AppTheme.dark,
@@ -264,7 +264,7 @@ class DuanjuApp extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        bootstrapError ?? '正在打开$appName',
+                        bootstrapError ?? 'Membuka $appName…',
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 18),
                       ),
@@ -274,7 +274,7 @@ class DuanjuApp extends StatelessWidget {
                       else
                         FilledButton(
                           onPressed: onRetry,
-                          child: const Text('重新打开'),
+                          child: const Text('Buka ulang'),
                         ),
                     ],
                   ),

@@ -1,7 +1,7 @@
 name: duanju_app
 description: M4zk1pL4yDramaBox - short drama streaming app
 publish_to: none
-version: 0.2.17+23
+version: 0.2.18+24
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
