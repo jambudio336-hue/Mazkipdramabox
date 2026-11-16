@@ -91,6 +91,13 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check Pillow
           python scripts/generate_android_icon.py
+      - name: Configure Android signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: python scripts/configure_signing.py
       - run: python scripts/build_android.py ${{ matrix.arguments }}
       - name: Remove signing files
         if: always()
