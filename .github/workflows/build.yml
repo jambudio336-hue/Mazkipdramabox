@@ -227,7 +227,7 @@ jobs:
             printf '%s\n\n' "M4zk1pL4yDramaBox ${version}。两个版本功能相同，区别只在站源范围，按需选择："
             printf '%s\n' "- M4zk1pL4yDramaBox hongguojian：仅红果站源"
             printf '%s\n' "- M4zk1pL4yDramaBox zhenguojian：全部站源"
-            printf '\n%s\n' "Android（当前为未签名 Release APK，需签名后才能安装）："
+            printf '\n%s\n' "Android（CI 无正式 keystore 时使用临时 Debug 测试签名，可安装测试；正式发布请配置私有 keystore）："
             printf '%s\n' "- *-arm64-v8a.apk：绝大多数手机选这个"
             printf '%s\n' "- *-armeabi-v7a.apk：较老的 32 位手机"
             printf '%s\n' "- *-x86_64.apk：模拟器"
@@ -236,7 +236,7 @@ jobs:
             printf '\n%s\n' "Windows（解压后运行 hongguojian.exe 或 zhenguojian.exe）："
             printf '%s\n' "- *-windows-x64.zip：Windows 10/11 x64 完整包；构建机没有音频和图形设备，播放自检未通过，未做设备验收"
             printf '\n%s\n' "校验：SHA256SUMS.txt"
-            printf '%s\n' "Android APK saat ini dibuat tanpa keystore pribadi."
+            printf '%s\n' "Jika secrets keystore tidak tersedia, APK ditandatangani dengan kunci debug sementara khusus pengujian. Jangan gunakan untuk distribusi produksi."
           } > notes.md
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" release/* --clobber
