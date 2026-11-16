@@ -170,7 +170,7 @@ class _RankingsScreenState extends State<RankingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: PopupMenuButton<SourceGroup>(
-          tooltip: '切换榜单站源',
+          tooltip: 'Ganti sumber peringkat',
           enabled: groups.length > 1,
           onSelected: (group) =>
               _select(_boards.firstWhere((board) => board.groupId == group.id)),
@@ -183,8 +183,8 @@ class _RankingsScreenState extends State<RankingsScreen> {
             children: [
               Text(
                 _board == null
-                    ? '榜单'
-                    : '${SourceSite.byId(_board!.source).groupName}榜单',
+                    ? 'Peringkat'
+                    : '${SourceSite.byId(_board!.source).groupName}Peringkat',
               ),
               if (groups.length > 1) const Icon(Icons.expand_more_rounded),
             ],
@@ -193,7 +193,7 @@ class _RankingsScreenState extends State<RankingsScreen> {
         actions: [
           RefreshAction(
             loading: _loading || _more,
-            tooltip: '更新榜单',
+            tooltip: '更新Peringkat',
             onPressed: _board == null ? _initialize : () => _load(force: true),
           ),
         ],
@@ -247,7 +247,7 @@ class _RankingsScreenState extends State<RankingsScreen> {
                       onPressed: _loading || _more
                           ? null
                           : () => _load(more: _failedMore, force: true),
-                      child: const Text('重试'),
+                      child: const Text('Coba lagi'),
                     ),
                   ],
                 ),
@@ -257,8 +257,8 @@ class _RankingsScreenState extends State<RankingsScreen> {
                   ? const Center(child: CircularProgressIndicator())
                   : items.isEmpty
                   ? StatusPanel(
-                      title: _error == null ? '暂无榜单内容' : '榜单暂时无法加载',
-                      message: _error ?? '当前站源暂无可显示的榜单。',
+                      title: _error == null ? '暂无Peringkat内容' : 'Peringkat暂时无法加载',
+                      message: _error ?? '当前站源暂无可显示的Peringkat。',
                       onRetry: _board == null
                           ? _initialize
                           : () => _load(force: true),
@@ -282,11 +282,11 @@ class _RankingsScreenState extends State<RankingsScreen> {
                                   : _hasMore
                                   ? OutlinedButton(
                                       onPressed: () => _load(more: true),
-                                      child: const Text('加载更多'),
+                                      child: const Text('Muat lainnya'),
                                     )
                                   : const Padding(
                                       padding: EdgeInsets.all(16),
-                                      child: Text('已显示全部榜单'),
+                                      child: Text('已显示SemuaPeringkat'),
                                     ),
                             );
                           }

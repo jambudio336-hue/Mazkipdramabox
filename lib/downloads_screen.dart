@@ -125,7 +125,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         )
         .toList();
     if (jobs.isEmpty) {
-      _message('没有适合此操作的任务');
+      _message('Tidak ada tugas yang sesuai untuk tindakan ini');
       return;
     }
     if (command == 'remove') {
@@ -133,19 +133,19 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       final accepted = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(completed > 0 ? '删除所选视频？' : '取消所选下载？'),
+          title: Text(completed > 0 ? 'Hapus video yang dipilih?' : 'Batalkan unduhan yang dipilih?'),
           content: Text(
-            '共 ${jobs.length} 项${completed > 0 ? '，包含 $completed 个已下载视频' : ''}，文件也会删除。\n需要保留视频时，请选择“清理任务，保留视频”。',
+            '共 ${jobs.length} 项${completed > 0 ? '，包含 $completed 个Sudah diunduh视频' : ''}，文件也会删除。\n需要Simpan视频时，请选择“清理任务，Simpan视频”。',
           ),
           actions: [
             TextButton(
               autofocus: AppLayout.isTelevision(context),
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('保留'),
+              child: const Text('Simpan'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('确认删除'),
+              child: const Text('Konfirmasi penghapusan'),
             ),
           ],
         ),
@@ -164,7 +164,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         if (!mounted || !_allowed || _stopBatch) break;
         setState(
           () => _operation =
-              '正在处理 ${math.min(offset + 500, jobs.length)}/${jobs.length} 项',
+              'Sedang memproses ${math.min(offset + 500, jobs.length)}/${jobs.length} 项',
         );
         final ids = jobs
             .sublist(offset, math.min(offset + 500, jobs.length))
@@ -189,15 +189,15 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         _selecting = true;
         _retryCommand = command;
         _message(
-          '已处理 $completed 项，${failures.length} 项失败：${failures.values.first}',
+          'Selesai diproses $completed 项，${failures.length} 项Gagal：${failures.values.first}',
         );
       } else {
         _message(
           _stopBatch
-              ? '已停止，已处理 $completed 项'
+              ? 'Dihentikan，Selesai diproses $completed 项'
               : command == 'archive'
-              ? '已清理 $completed 项任务，视频仍可本地播放'
-              : '已处理 $completed 项',
+              ? 'Dibersihkan $completed 项任务，视频仍可Putar lokal'
+              : 'Selesai diproses $completed 项',
         );
       }
       await _refresh();
@@ -279,7 +279,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, change) => AlertDialog(
-          title: const Text('筛选下载合集'),
+          title: const Text('Saring koleksi unduhan'),
           content: SizedBox(
             width: 420,
             child: SingleChildScrollView(
@@ -287,20 +287,20 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('任务状态'),
+                  const Text('Status tugas'),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
                       for (final entry in const {
-                        'all': '全部任务',
-                        'pending': '未完成',
-                        'active': '进行中',
-                        'paused': '已暂停',
-                        'failed': '失败',
-                        'completed': '已下载',
-                        'archived': '已保留视频',
+                        'all': 'Semua tugas',
+                        'pending': 'Belum selesai',
+                        'active': 'Sedang berlangsung',
+                        'paused': 'Dijeda',
+                        'failed': 'Gagal',
+                        'completed': 'Sudah diunduh',
+                        'archived': '已Simpan视频',
                       }.entries)
                         ChoiceChip(
                           label: Text(entry.value),
@@ -310,16 +310,16 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text('剧集状态'),
+                  const Text('Status drama'),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
                       for (final entry in const {
-                        '': '全部',
-                        'ongoing': '连载中',
-                        'finished': '已完结',
+                        '': 'Semua',
+                        'ongoing': 'Sedang tayang',
+                        'finished': 'Tamat',
                       }.entries)
                         ChoiceChip(
                           label: Text(entry.value),
@@ -339,7 +339,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('应用'),
+              child: const Text('Terapkan'),
             ),
           ],
         ),
@@ -356,14 +356,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   List<Widget> _titleActions(List<DownloadCollection> collections) => [
     if (_selecting) ...[
       IconButton(
-        tooltip: '全选当前',
+        tooltip: 'Pilih semua yang tampil',
         onPressed: _busy
             ? null
             : () => _select(collections.expand((c) => c.jobs)),
         icon: const Icon(Icons.select_all_rounded),
       ),
       IconButton(
-        tooltip: '退出多选',
+        tooltip: 'Keluar dari pilihan ganda',
         onPressed: _busy
             ? null
             : () => setState(() {
@@ -375,7 +375,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       ),
     ] else ...[
       IconButton(
-        tooltip: '筛选下载合集',
+        tooltip: 'Saring koleksi unduhan',
         onPressed: _filters,
         icon: Badge(
           isLabelVisible: _filter != 'all' || _release.isNotEmpty,
@@ -383,13 +383,13 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         ),
       ),
       IconButton(
-        tooltip: '多选下载任务',
+        tooltip: 'Pilih beberapa tugas unduhan',
         onPressed: () => setState(() => _selecting = true),
         icon: const Icon(Icons.checklist_rounded),
       ),
       IconButton(
         key: const ValueKey('download-local-media'),
-        tooltip: '本地媒体与合并',
+        tooltip: 'Media lokal dan penggabungan',
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute<void>(
@@ -404,7 +404,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
     ],
     PopupMenuButton<String>(
       key: const ValueKey('download-queue-actions'),
-      tooltip: '队列操作',
+      tooltip: 'Operasi antrean',
       enabled: !_busy,
       onSelected: (value) {
         if (value == 'refresh') {
@@ -414,10 +414,10 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         }
       },
       itemBuilder: (_) => const [
-        PopupMenuItem(value: 'pause', child: Text('全部暂停')),
-        PopupMenuItem(value: 'resume', child: Text('全部继续')),
-        PopupMenuItem(value: 'archive', child: Text('清理已完成任务，保留视频')),
-        PopupMenuItem(value: 'refresh', child: Text('刷新记录')),
+        PopupMenuItem(value: 'pause', child: Text('SemuaJeda')),
+        PopupMenuItem(value: 'resume', child: Text('Semua继续')),
+        PopupMenuItem(value: 'archive', child: Text('清理已完成任务，Simpan视频')),
+        PopupMenuItem(value: 'refresh', child: Text('Segarkan riwayat')),
       ],
     ),
   ];
@@ -447,8 +447,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          '${collection.completed}/${collection.jobs.length} 集已下载 · ${storageSize(collection.bytes)}'
-          '${collection.active > 0 ? ' · ${collection.active} 项进行中' : ''}${collection.failed > 0 ? ' · ${collection.failed} 项失败' : ''}',
+          '${collection.completed}/${collection.jobs.length} 集Sudah diunduh · ${storageSize(collection.bytes)}'
+          '${collection.active > 0 ? ' · ${collection.active} 项Sedang berlangsung' : ''}${collection.failed > 0 ? ' · ${collection.failed} 项Gagal' : ''}',
         ),
         onTap: () => setState(() {
           if (!_expanded.remove(collection.drama.id)) {
@@ -471,15 +471,15 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
             PopupMenuItem(
               value: 'update',
               enabled: !_updater.busy,
-              child: const Text('更新本剧 · 补充新增与缺失'),
+              child: const Text('Perbarui drama ini · lengkapi episode baru dan yang hilang'),
             ),
-            const PopupMenuItem(value: 'select', child: Text('选择本合集')),
-            const PopupMenuItem(value: 'pause', child: Text('暂停本合集')),
-            const PopupMenuItem(value: 'resume', child: Text('继续 / 重试本合集')),
-            const PopupMenuItem(value: 'archive', child: Text('清理已完成任务，保留视频')),
+            const PopupMenuItem(value: 'select', child: Text('Pilih koleksi ini')),
+            const PopupMenuItem(value: 'pause', child: Text('Jeda koleksi ini')),
+            const PopupMenuItem(value: 'resume', child: Text('Lanjutkan / coba lagi koleksi ini')),
+            const PopupMenuItem(value: 'archive', child: Text('清理已完成任务，Simpan视频')),
             if (_filter == 'archived')
-              const PopupMenuItem(value: 'restore', child: Text('恢复到任务列表')),
-            const PopupMenuItem(value: 'remove', child: Text('取消任务并删除视频')),
+              const PopupMenuItem(value: 'restore', child: Text('Pulihkan ke daftar tugas')),
+            const PopupMenuItem(value: 'remove', child: Text('Batalkan tugas dan hapus video')),
           ],
         ),
       ),
@@ -510,7 +510,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               '第 ${job.episode.number} 集${job.episode.vip ? ' · VIP' : ''}',
             ),
             subtitle: Text(
-              '${job.archived ? '已保留视频' : job.stateLabel} · ${storageSize(job.bytes)}'
+              '${job.archived ? '已Simpan视频' : job.stateLabel} · ${storageSize(job.bytes)}'
               '${job.actualQuality > 0 ? ' · ${job.actualQuality}P' : ''}${job.error.isNotEmpty ? '\n${job.error}' : ''}',
             ),
             onTap: _busy
@@ -524,7 +524,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                 ? null
                 : PopupMenuButton<String>(
                     enabled: !_busy,
-                    tooltip: '分集操作',
+                    tooltip: 'Operasi episode',
                     onSelected: (value) {
                       if (value == 'play') {
                         _play(job);
@@ -534,22 +534,22 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                     },
                     itemBuilder: (_) => [
                       if (job.completed)
-                        const PopupMenuItem(value: 'play', child: Text('本地播放')),
+                        const PopupMenuItem(value: 'play', child: Text('Putar lokal')),
                       if (job.active)
-                        const PopupMenuItem(value: 'pause', child: Text('暂停')),
+                        const PopupMenuItem(value: 'pause', child: Text('Jeda')),
                       if (job.resumable)
                         const PopupMenuItem(
                           value: 'resume',
-                          child: Text('继续 / 重试'),
+                          child: Text('Lanjutkan / coba lagi'),
                         ),
                       if (job.completed)
                         PopupMenuItem(
                           value: job.archived ? 'restore' : 'archive',
-                          child: Text(job.archived ? '恢复任务' : '清理任务，保留视频'),
+                          child: Text(job.archived ? 'Pulihkan tugas' : '清理任务，Simpan视频'),
                         ),
                       PopupMenuItem(
                         value: 'remove',
-                        child: Text(job.completed ? '删除视频' : '取消下载'),
+                        child: Text(job.completed ? 'Hapus video' : 'Batalkan unduhan'),
                       ),
                     ],
                   ),
@@ -578,13 +578,13 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
             if (_busy)
               TextButton(
                 onPressed: () => setState(() => _stopBatch = true),
-                child: const Text('停止批量操作'),
+                child: const Text('Hentikan operasi massal'),
               )
             else ...[
               for (final entry in const {
-                'pause': '暂停',
-                'resume': '继续 / 重试',
-                'archive': '保留视频',
+                'pause': 'Jeda',
+                'resume': 'Lanjutkan / coba lagi',
+                'archive': 'Simpan视频',
                 'remove': '删除',
               }.entries)
                 TextButton(
@@ -602,7 +602,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                     _retryCommand!,
                     _jobs.where((job) => _selected.contains(job.id)),
                   ),
-                  child: const Text('重试失败项'),
+                  child: const Text('Coba lagiGagal项'),
                 ),
             ],
           ],
@@ -623,7 +623,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         if (_expanded.contains(collection.drama.id)) ...collection.jobs,
       ],
     ];
-    final title = _selecting ? '已选 ${_selected.length} 项' : '下载合集';
+    final title = _selecting ? 'Dipilih ${_selected.length} 项' : '下载合集';
     final actions = _titleActions(collections);
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -667,7 +667,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
           child: Text(
             '${collections.length} 部 · ${collections.fold<int>(0, (sum, c) => sum + c.jobs.length)} 集'
-            '${_filter == 'archived' ? ' · 已清理任务，视频仍保留' : ''}',
+            '${_filter == 'archived' ? ' · Dibersihkan任务，视频仍Simpan' : ''}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -706,7 +706,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               : rows.isEmpty
               ? StatusPanel(
                   title: _jobs.isEmpty ? '还没有下载任务' : '暂无符合条件的任务',
-                  message: '在剧集详情选择下载，或调整筛选查看已保留的视频。',
+                  message: '在剧集详情选择下载，或调整筛选查看已Simpan的视频。',
                   icon: Icons.download_outlined,
                 )
               : ListView.builder(

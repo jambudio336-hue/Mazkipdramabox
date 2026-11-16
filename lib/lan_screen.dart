@@ -74,7 +74,7 @@ void openLanSync(BuildContext context) {
   if (controller == null) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('设备互联尚未就绪')));
+    ).showSnackBar(const SnackBar(content: Text('Koneksi antarperangkat belum siap')));
     return;
   }
   Navigator.push(
@@ -119,12 +119,12 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
     final value = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('设备名称'),
+        title: const Text('Nama perangkat'),
         content: TextField(
           controller: name,
           maxLength: 60,
           autofocus: true,
-          decoration: const InputDecoration(labelText: '在其他设备上显示的名称'),
+          decoration: const InputDecoration(labelText: 'Nama yang ditampilkan di perangkat lain'),
           onSubmitted: (_) => Navigator.pop(context, name.text),
         ),
         actions: [
@@ -134,7 +134,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, name.text),
-            child: const Text('保存'),
+            child: const Text('Simpan'),
           ),
         ],
       ),
@@ -190,7 +190,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
       final controlsEnabled =
           !_busy && !_cancelling && !link.syncing && !link.store.locked;
       return Scaffold(
-        appBar: AppBar(title: const Text('追剧同步')),
+        appBar: AppBar(title: const Text('Sinkronisasi daftar tontonan')),
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 720),
@@ -203,7 +203,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                       SwitchListTile.adaptive(
                         key: const ValueKey('lan-enabled'),
                         title: const Text('设备互联'),
-                        subtitle: const Text('同一局域网直连，接收端无需点击确认'),
+                        subtitle: const Text('同一局域网Koneksi langsung，接收端无需点击确认'),
                         value: link.enabled,
                         onChanged: _busy || link.store.locked
                             ? null
@@ -212,9 +212,9 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                       ListTile(
                         leading: Icon(lanDeviceIcon(link.kind)),
                         title: Text(link.deviceName),
-                        subtitle: Text('本机用户 · ' + link.store.profile.name),
+                        subtitle: Text('Pengguna perangkat ini · ' + link.store.profile.name),
                         trailing: IconButton(
-                          tooltip: '修改设备名称',
+                          tooltip: '修改Nama perangkat',
                           onPressed: _busy ? null : _rename,
                           icon: const Icon(Icons.edit_outlined),
                         ),
@@ -240,13 +240,13 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                         ),
                         subtitle: Text(
                           remote == null
-                              ? '仅发现一台设备时自动连接，多台时由发起端选择'
-                              : '对方用户 · ' + remote.user,
+                              ? 'Terhubung otomatis jika hanya satu perangkat ditemukan; jika lebih dari satu, pilih perangkat dari perangkat pengirim'
+                              : 'Pengguna lain · ' + remote.user,
                         ),
                         trailing: remote == null
                             ? null
                             : PopupMenuButton<String>(
-                                tooltip: '设备操作',
+                                tooltip: 'Operasi perangkat',
                                 onSelected: (value) => _perform(
                                   () => value == 'forget'
                                       ? link.forget(remote.peer)
@@ -255,11 +255,11 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                                 itemBuilder: (_) => const [
                                   PopupMenuItem(
                                     value: 'disconnect',
-                                    child: Text('断开连接'),
+                                    child: Text('Putuskan koneksi'),
                                   ),
                                   PopupMenuItem(
                                     value: 'forget',
-                                    child: Text('忘记配对'),
+                                    child: Text('Lupakan pasangan'),
                                   ),
                                 ],
                               ),
@@ -268,7 +268,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.devices_other_rounded),
-                          label: Text(remote == null ? '选择设备' : '切换设备'),
+                          label: Text(remote == null ? 'Pilih perangkat' : 'Ganti perangkat'),
                           onPressed: _busy || link.store.locked
                               ? null
                               : () => chooseLanDevice(
@@ -288,8 +288,8 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                     children: [
                       SwitchListTile.adaptive(
                         key: const ValueKey('lan-auto-sync'),
-                        title: const Text('自动同步'),
-                        subtitle: const Text('同步追剧、观看状态和这些剧目的续播进度'),
+                        title: const Text('Sinkronisasi otomatis'),
+                        subtitle: const Text('Sinkronkan daftar tontonan, status menonton, dan posisi lanjut untuk drama ini'),
                         value: link.autoSync,
                         onChanged: controlsEnabled
                             ? (value) => _perform(() => link.setAutoSync(value))
@@ -310,7 +310,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                               Text(link.syncMessage),
                               if (link.lastSync != null)
                                 Text(
-                                  '最近同步 · ' +
+                                  'Sinkronisasi terakhir · ' +
                                       MaterialLocalizations.of(
                                         context,
                                       ).formatTimeOfDay(
@@ -320,17 +320,17 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                                 ),
                               if (link.lastLocalCount != null)
                                 Text(
-                                  '本机：' + link.lastLocalCount!.label,
+                                  'Perangkat ini: ' + link.lastLocalCount!.label,
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               if (link.lastRemoteCount != null)
                                 Text(
-                                  '对方：' + link.lastRemoteCount!.label,
+                                  'Perangkat lain: ' + link.lastRemoteCount!.label,
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               if (link.skipped > 0)
                                 Text(
-                                  '保留范围外记录：' + link.skipped.toString(),
+                                  'Simpan范围外记录：' + link.skipped.toString(),
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                             ],
@@ -345,7 +345,7 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                                 ? Icons.close_rounded
                                 : Icons.sync_rounded,
                           ),
-                          label: Text(link.syncing ? '取消本次同步' : '立即同步'),
+                          label: Text(link.syncing ? 'Batalkan sinkronisasi ini' : 'Sinkronkan sekarang'),
                           onPressed: link.syncing
                               ? _cancelling
                                     ? null
@@ -362,8 +362,8 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.compare_arrows_rounded),
-                      title: Text('$conflicts 项记录待处理'),
-                      subtitle: const Text('两端同时修改的内容已保留，选择要继续使用的记录'),
+                      title: Text('$conflicts catatan menunggu penanganan'),
+                      subtitle: const Text('两端同时修改的内容已Simpan，选择要继续使用的记录'),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: () => Navigator.push(
                         context,
@@ -375,8 +375,8 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                   ),
                 ListTile(
                   leading: const Icon(Icons.sync_alt_rounded),
-                  title: const Text('手动同步'),
-                  subtitle: const Text('双向合并、覆盖对方或覆盖本机'),
+                  title: const Text('Sinkronisasi manual'),
+                  subtitle: const Text('Gabungkan dua arah, timpa perangkat lain, atau timpa perangkat ini'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   enabled: remote != null && controlsEnabled,
                   onTap: remote != null && controlsEnabled ? _manual : null,
@@ -399,24 +399,24 @@ class _LanSyncScreenState extends State<LanSyncScreen> {
                 if (link.local != null)
                   ExpansionTile(
                     leading: const Icon(Icons.info_outline_rounded),
-                    title: const Text('本机地址与连接帮助'),
+                    title: const Text('Alamat perangkat ini dan bantuan koneksi'),
                     childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     children: [
                       const Text(
-                        '两台设备都需开启设备互联并保持前台。发现失败时，可在另一端输入下列地址；Windows 需允许本应用通过专用网络防火墙。',
+                        '两台设备都需开启设备互联并保持前台。发现Gagal时，可在另一端输入下列地址；Windows 需允许本Terapkan通过专用网络防火墙。',
                       ),
                       for (final address in link.local!.addresses)
                         ListTile(
                           title: SelectableText(address),
                           trailing: IconButton(
-                            tooltip: '复制地址',
+                            tooltip: 'Salin alamat',
                             icon: const Icon(Icons.copy_rounded),
                             onPressed: () =>
                                 Clipboard.setData(ClipboardData(text: address)),
                           ),
                         ),
                       if (link.local!.addresses.isEmpty)
-                        const Text('尚未取得局域网地址，请检查 Wi-Fi 或网线连接。'),
+                        const Text('Alamat jaringan lokal belum tersedia. Periksa koneksi Wi-Fi atau kabel LAN.'),
                     ],
                   ),
               ],
@@ -500,7 +500,7 @@ class _LanDevicesState extends State<_LanDevices> {
     });
     try {
       if (_epoch != link.store.profileEpoch || link.store.locked)
-        throw StateError('当前用户已变更');
+        throw StateError('Pengguna saat ini berubah');
       final selected = peer ?? await link.probe(_address.text);
       if (!mounted || _epoch != link.store.profileEpoch || link.store.locked)
         return;
@@ -558,17 +558,17 @@ class _LanDevicesState extends State<_LanDevices> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.change ? '切换设备' : '连接设备',
+                    widget.change ? 'Ganti perangkat' : 'Hubungkan perangkat',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 IconButton(
-                  tooltip: '重新搜索',
+                  tooltip: 'Cari ulang',
                   onPressed: _busy ? null : link.rescan,
                   icon: const Icon(Icons.refresh_rounded),
                 ),
                 IconButton(
-                  tooltip: '关闭',
+                  tooltip: 'Tutup',
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close_rounded),
                 ),
@@ -582,7 +582,7 @@ class _LanDevicesState extends State<_LanDevices> {
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Text('只发现一台设备时自动连接；多台时选择接收设备，对方无需确认。'),
+                  child: Text('Jika hanya satu perangkat ditemukan, koneksi otomatis; jika lebih dari satu, pilih perangkat penerima. Penerima tidak perlu mengonfirmasi.'),
                 ),
                 if (peers.isEmpty)
                   Padding(
@@ -591,10 +591,10 @@ class _LanDevicesState extends State<_LanDevices> {
                       children: [
                         const Icon(Icons.wifi_find_rounded, size: 48),
                         const SizedBox(height: 12),
-                        Text(link.receiving ? '正在发现同一网络中的设备' : '正在开启设备互联'),
+                        Text(link.receiving ? 'Mencari perangkat di jaringan yang sama' : 'Mengaktifkan koneksi antarperangkat'),
                         const SizedBox(height: 8),
                         const Text(
-                          '请让另一台设备也开启设备互联并保持应用在前台。',
+                          '请让另一台设备也开启设备互联并保持Terapkan在前台。',
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -613,17 +613,17 @@ class _LanDevicesState extends State<_LanDevices> {
                       ),
                       subtitle: Text(
                         link.connection?.peer.id == peer.id
-                            ? '已连接'
+                            ? 'Terhubung'
                             : link.peers.any((found) => found.id == peer.id)
-                            ? '可连接'
-                            : '上次连接的设备',
+                            ? 'Dapat dihubungkan'
+                            : 'Perangkat yang terakhir terhubung',
                       ),
                       trailing: PopupMenuButton<String>(
-                        tooltip: '设备操作',
+                        tooltip: 'Operasi perangkat',
                         enabled: !_busy && !link.connecting,
                         onSelected: (_) => _forget(peer),
                         itemBuilder: (_) => const [
-                          PopupMenuItem(value: 'forget', child: Text('忘记配对')),
+                          PopupMenuItem(value: 'forget', child: Text('Lupakan pasangan')),
                         ],
                       ),
                       onTap: _busy || link.connecting
@@ -649,7 +649,7 @@ class _LanDevicesState extends State<_LanDevices> {
                 TextButton.icon(
                   onPressed: () => setState(() => _manual = !_manual),
                   icon: const Icon(Icons.keyboard_rounded),
-                  label: const Text('输入地址连接'),
+                  label: const Text('Hubungkan dengan memasukkan alamat'),
                 ),
                 if (_manual) ...[
                   TextField(
@@ -657,7 +657,7 @@ class _LanDevicesState extends State<_LanDevices> {
                     autocorrect: false,
                     enableSuggestions: false,
                     decoration: const InputDecoration(
-                      labelText: '对方显示的本机地址',
+                      labelText: 'Alamat perangkat yang ditampilkan di perangkat lain',
                       hintText: '192.168.1.8:53120',
                     ),
                     onSubmitted: (_) => _connect(null),
@@ -665,7 +665,7 @@ class _LanDevicesState extends State<_LanDevices> {
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: _busy ? null : () => _connect(null),
-                    child: const Text('连接'),
+                    child: const Text('Hubungkan'),
                   ),
                 ],
                 const SizedBox(height: 24),
@@ -731,7 +731,7 @@ class _LanManualState extends State<_LanManual> {
       if (_epoch != link.store.profileEpoch ||
           link.store.locked ||
           link.connection != _connection) {
-        throw StateError('设备或用户已变更，请关闭面板后重新操作');
+        throw StateError('设备或用户已变更，请Tutup面板后重新操作');
       }
       if (_preview == null) {
         final preview = await link.preview(_mode);
@@ -753,7 +753,7 @@ class _LanManualState extends State<_LanManual> {
 
   @override
   Widget build(BuildContext context) {
-    final name = link.connection?.peer.name ?? '对方';
+    final name = link.connection?.peer.name ?? 'Perangkat lain';
     return PopScope<void>(
       canPop: !_busy && !_cancelling,
       child: SafeArea(
@@ -767,12 +767,12 @@ class _LanManualState extends State<_LanManual> {
                 children: [
                   Expanded(
                     child: Text(
-                      '手动同步',
+                      'Sinkronisasi manual',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                   IconButton(
-                    tooltip: '关闭',
+                    tooltip: 'Tutup',
                     onPressed: _busy ? null : () => Navigator.pop(context),
                     icon: const Icon(Icons.close_rounded),
                   ),
@@ -801,9 +801,9 @@ class _LanManualState extends State<_LanManual> {
                           ),
                           title: Text(mode.label),
                           subtitle: Text(switch (mode) {
-                            LanSyncMode.merge => '本机 ↔ $name · 合并双方记录',
-                            LanSyncMode.push => '本机 → $name · 以本机记录替换对方',
-                            LanSyncMode.pull => '$name → 本机 · 以对方记录替换本机',
+                            LanSyncMode.merge => '本机 ↔ $name · Gabungkan riwayat kedua perangkat',
+                            LanSyncMode.push => '本机 → $name · 以本机记录替换Perangkat lain',
+                            LanSyncMode.pull => '$name → Perangkat ini · 以Perangkat lain记录替换本机',
                           }),
                           onTap: _busy
                               ? null
@@ -827,11 +827,11 @@ class _LanManualState extends State<_LanManual> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '同步预览',
+                              'Pratinjau sinkronisasi',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 12),
-                            Text('本机 · ' + link.store.profile.name),
+                            Text('Perangkat ini · ' + link.store.profile.name),
                             Text(preview.localCount.label),
                             const SizedBox(height: 12),
                             Text(name + ' · ' + preview.connection.user),
@@ -842,7 +842,7 @@ class _LanManualState extends State<_LanManual> {
                                 child: Text(
                                   '双方范围外的 ' +
                                       preview.skipped.toString() +
-                                      ' 条记录会保留',
+                                      ' 条记录会Simpan',
                                 ),
                               ),
                             if (_mode != LanSyncMode.merge)
@@ -883,7 +883,7 @@ class _LanManualState extends State<_LanManual> {
                   ? OutlinedButton.icon(
                       onPressed: _cancelling ? null : _cancel,
                       icon: const Icon(Icons.close_rounded),
-                      label: Text(_cancelling ? '正在取消' : '取消本次同步'),
+                      label: Text(_cancelling ? '正在取消' : 'Batalkan sinkronisasi ini'),
                     )
                   : FilledButton(
                       onPressed: _submit,
@@ -908,7 +908,7 @@ class _LanConflicts extends StatelessWidget {
   final LanController controller;
 
   String _value(String field, Object? value) {
-    if (field == 'member') return value == true ? '保留追剧' : '取消追剧';
+    if (field == 'member') return value == true ? 'Simpan追剧' : '取消追剧';
     if (value == null) return '清空续播进度';
     final row = lanMap(value);
     if (field == 'status') {
@@ -1098,8 +1098,8 @@ class _LanPushPanelState extends State<_LanPushPanel> {
           return await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('切换对方正在播放的内容？'),
-                  content: Text('对方正在播放“$title”，继续后将接续本机当前分集。'),
+                  title: const Text('切换Perangkat lain正在播放的内容？'),
+                  content: Text('Perangkat lain正在播放“$title”，继续后将接续本机当前分集。'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
@@ -1154,7 +1154,7 @@ class _LanPushPanelState extends State<_LanPushPanel> {
                   const SizedBox(height: 12),
                   Text(
                     '接收设备 · ' +
-                        (widget.controller.connection?.peer.name ?? '连接已断开'),
+                        (widget.controller.connection?.peer.name ?? 'Hubungkan已断开'),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
@@ -1171,7 +1171,7 @@ class _LanPushPanelState extends State<_LanPushPanel> {
                     const Padding(
                       padding: EdgeInsets.only(top: 16),
                       child: Text(
-                        '对方实际开播后，本机自动暂停。',
+                        'Perangkat lain实际开播后，本机自动Jeda。',
                         textAlign: TextAlign.center,
                       ),
                     ),

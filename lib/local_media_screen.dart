@@ -83,22 +83,22 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
     final selected = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('导出哪部剧到 Emby？'),
+        title: const Text('Drama mana yang ingin diekspor ke Emby?'),
         children: [
           if (_jobs.isNotEmpty)
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, '*'),
-              child: Text('全部已下载 · ${_jobs.length} 集'),
+              child: Text('SemuaSudah diunduh · ${_jobs.length} 集'),
             ),
           for (final entry in groups.entries)
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, entry.key),
               child: Text(
-                '${entry.value.first.drama.title} · 已下载 ${entry.value.length} 集',
+                '${entry.value.first.drama.title} · Sudah diunduh ${entry.value.length} 集',
               ),
             ),
           if (groups.isEmpty)
-            const Padding(padding: EdgeInsets.all(20), child: Text('请先下载分集')),
+            const Padding(padding: EdgeInsets.all(20), child: Text('Unduh episode terlebih dahulu')),
         ],
       ),
     );
@@ -120,7 +120,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
     final watch = widget.store.mediaWatched(item.id);
     final episode = Episode({
       'id': item.id,
-      'title': item.merged ? '合并视频' : '第 ${item.episodes.first} 集',
+      'title': item.merged ? 'Video gabungan' : '第 ${item.episodes.first} 集',
       'currentEpisode': item.episodes.first,
     }, 1);
     await Navigator.push(
@@ -150,14 +150,14 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
     final yes = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('删除此媒体文件？'),
+        title: const Text('Hapus file media ini?'),
         content: Text(
-          '将删除此成品文件。已单独保存的原分集不受影响。${item.merged || item.special ? '' : '此分集不再自动导出，需要时可手动重新导出。'}',
+          '将删除此成品文件。已单独Simpan的原分集不受影响。${item.merged || item.special ? '' : '此分集不再自动导出，需要时可手动重新导出。'}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('保留'),
+            child: const Text('Simpan'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
@@ -197,10 +197,10 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
           .toList();
       return Scaffold(
         appBar: AppBar(
-          title: const Text('本地媒体'),
+          title: const Text('Media lokal'),
           actions: [
             IconButton(
-              tooltip: '刷新',
+              tooltip: 'Segarkan',
               onPressed: library.busy ? null : _refresh,
               icon: const Icon(Icons.refresh),
             ),
@@ -216,12 +216,12 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                 runSpacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('合并成品'),
+                    label: const Text('Hasil gabungan'),
                     selected: _merged,
                     onSelected: (_) => setState(() => _merged = true),
                   ),
                   ChoiceChip(
-                    label: const Text('Emby 导出'),
+                    label: const Text('Ekspor Emby'),
                     selected: !_merged,
                     onSelected: (_) => setState(() => _merged = false),
                   ),
@@ -230,7 +230,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                         ? null
                         : () => _create(_merged),
                     icon: Icon(_merged ? Icons.merge : Icons.output),
-                    label: Text(_merged ? '合并已下载分集' : '导出已下载分集'),
+                    label: Text(_merged ? '合并Sudah diunduh分集' : '导出Sudah diunduh分集'),
                   ),
                 ],
               ),
@@ -271,7 +271,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '将 exports 目录加入 Emby 电视节目库，可读取分集名称和海报元数据。自动导出可在设置中开启。',
+                      'Tambahkan folder exports ke pustaka acara TV Emby untuk membaca nama episode dan metadata poster. Ekspor otomatis dapat diaktifkan di Pengaturan.',
                     ),
                     if (library.root != null)
                       TextButton.icon(
@@ -282,7 +282,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                           ),
                         ),
                         icon: const Icon(Icons.copy),
-                        label: const Text('复制 Emby 媒体目录'),
+                        label: const Text('Salin folder media Emby'),
                       ),
                   ],
                 ),
@@ -292,7 +292,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                   ? const Center(child: CircularProgressIndicator())
                   : items.isEmpty
                   ? Center(
-                      child: Text(_merged ? '合并成品会显示在这里，可直接播放和续播。' : '暂未导出媒体'),
+                      child: Text(_merged ? 'Hasil gabungan会显示在这里，可直接播放和续播。' : 'Belum ada media yang diekspor'),
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
@@ -343,13 +343,13 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                                         item.merged &&
                                                 item.episodes.length ==
                                                     item.drama.episodes
-                                            ? '全集播放'
-                                            : '本地播放',
+                                            ? 'Putar semua episode'
+                                            : 'Putar lokal',
                                       ),
                                     ),
                                     const Spacer(),
                                     IconButton(
-                                      tooltip: '复制文件路径',
+                                      tooltip: 'Salin lokasi file',
                                       onPressed: () => Clipboard.setData(
                                         ClipboardData(
                                           text: library.fileFor(item),
@@ -358,7 +358,7 @@ class _LocalMediaScreenState extends State<LocalMediaScreen> {
                                       icon: const Icon(Icons.copy),
                                     ),
                                     IconButton(
-                                      tooltip: '删除成品',
+                                      tooltip: 'Hapus hasil gabungan',
                                       onPressed: library.busy
                                           ? null
                                           : () => _remove(item),
@@ -388,10 +388,10 @@ class _LocalFileRepository extends AppRepository {
   final String file;
   Future<PlaybackPlan> _plan() async {
     if (!store.canDownload || !store.allowsSource(item.drama.source)) {
-      throw AppFailure('当前用户无权读取此视频');
+      throw AppFailure('Pengguna saat ini tidak memiliki izin membaca video ini');
     }
     if (!await File(file).exists() || await File(file).length() == 0) {
-      throw AppFailure('本地成品文件缺失，请重新生成。', code: 'local_media');
+      throw AppFailure('File hasil lokal tidak ditemukan. Buat ulang.', code: 'local_media');
     }
     return PlaybackPlan(url: file, local: true);
   }
@@ -438,7 +438,7 @@ class _LocalFileRepository extends AppRepository {
     Drama drama,
     Episode episode, {
     int quality = 0,
-  }) => throw AppFailure('此成品仅支持本地播放');
+  }) => throw AppFailure('此成品仅支持Putar lokal');
   @override
   Future<PlaybackPlan> fallback(PlaybackPlan current) => _plan();
   @override

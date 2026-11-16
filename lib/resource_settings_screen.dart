@@ -15,7 +15,7 @@ class DownloadPreferencesScreen extends StatelessWidget {
     builder: (context, _) {
       final preferences = store.downloadPreferences;
       return Scaffold(
-        appBar: AppBar(title: const Text('下载偏好')),
+        appBar: AppBar(title: const Text('Preferensi unduhan')),
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 680),
@@ -23,17 +23,17 @@ class DownloadPreferencesScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 ListTile(
-                  title: const Text('默认画质'),
-                  subtitle: const Text('指定画质不可用时，使用源站提供的可用版本。'),
+                  title: const Text('Kualitas default'),
+                  subtitle: const Text('Jika kualitas yang dipilih tidak tersedia, gunakan kualitas yang disediakan sumber.'),
                 ),
                 DropdownButtonFormField<int>(
                   initialValue: preferences.quality,
-                  decoration: const InputDecoration(labelText: '下载画质'),
+                  decoration: const InputDecoration(labelText: 'Kualitas unduhan'),
                   items: [
                     for (final value in DownloadPreferences.qualities)
                       DropdownMenuItem(
                         value: value,
-                        child: Text(value == 0 ? '自动 · 优先高清' : '${value}P'),
+                        child: Text(value == 0 ? '自动 · Prioritaskan kualitas tinggi' : '${value}P'),
                       ),
                   ],
                   onChanged: !store.canDownload
@@ -52,8 +52,8 @@ class DownloadPreferencesScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 SwitchListTile(
                   value: preferences.includeVip,
-                  title: const Text('默认包含 VIP 集'),
-                  subtitle: const Text('VIP 集可能仅提供试看内容；下载前仍可调整选择。'),
+                  title: const Text('Sertakan episode VIP secara default'),
+                  subtitle: const Text('Episode VIP mungkin hanya tersedia sebagai cuplikan; pilihan masih dapat diubah sebelum mengunduh.'),
                   onChanged: !store.canDownload
                       ? null
                       : (value) => saveUserChange(
@@ -65,7 +65,7 @@ class DownloadPreferencesScreen extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text('偏好保存在当前用户中，应用于下载选集、批量下载和更新本剧。'),
+                  child: Text('偏好Simpan在当前用户中，Terapkan于下载选集、Unduhan massal和更新本剧。'),
                 ),
               ],
             ),
@@ -153,7 +153,7 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
       setState(() => _settings = settings);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('设置已保存，将用于后续请求和下载任务')));
+      ).showSnackBar(const SnackBar(content: Text('Pengaturan tersimpan dan akan digunakan untuk permintaan serta unduhan berikutnya')));
     } catch (error) {
       if (mounted) setState(() => _error = error.toString());
     } finally {
@@ -179,20 +179,20 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('网络与资源'),
+      title: const Text('Jaringan dan sumber daya'),
       actions: [
         TextButton(
           onPressed: _busy || _settings == null || !_allowed ? null : _save,
-          child: const Text('保存'),
+          child: const Text('Simpan'),
         ),
       ],
     ),
     body: !_allowed
-        ? const StatusPanel(title: '需要管理员权限', message: '请返回后切换管理员。')
+        ? const StatusPanel(title: 'Memerlukan izin administrator', message: 'Kembali lalu beralih ke administrator.')
         : _settings == null
         ? _error == null
               ? const Center(child: CircularProgressIndicator())
-              : StatusPanel(title: '无法读取设置', message: _error!, onRetry: _load)
+              : StatusPanel(title: 'Tidak dapat membaca pengaturan', message: _error!, onRetry: _load)
         : Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 720),
@@ -207,11 +207,11 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
                     ),
                   DropdownButtonFormField<String>(
                     initialValue: _mode,
-                    decoration: const InputDecoration(labelText: '连接方式'),
+                    decoration: const InputDecoration(labelText: 'Metode koneksi'),
                     items: const [
                       DropdownMenuItem(value: 'auto', child: Text('自动')),
-                      DropdownMenuItem(value: 'direct', child: Text('直连')),
-                      DropdownMenuItem(value: 'manual', child: Text('手动代理')),
+                      DropdownMenuItem(value: 'direct', child: Text('Koneksi langsung')),
+                      DropdownMenuItem(value: 'manual', child: Text('Proxy manual')),
                     ],
                     onChanged: _busy
                         ? null
@@ -222,7 +222,7 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         _settings!.systemProxyStatus.isEmpty
-                            ? '使用系统静态代理；未配置时使用环境变量或直连。'
+                            ? '使用系统静态代理；未配置时使用环境变量或Koneksi langsung。'
                             : _settings!.systemProxyStatus,
                       ),
                     ),
@@ -235,12 +235,12 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
                         enableSuggestions: false,
                         autocorrect: false,
                         decoration: InputDecoration(
-                          labelText: '代理地址',
+                          labelText: 'Alamat proxy',
                           hintText: 'http://127.0.0.1:7890',
-                          helperText: '支持 HTTP、HTTPS、SOCKS5；仅保存在本机，不进入配置备份。',
+                          helperText: '支持 HTTP、HTTPS、SOCKS5；仅Simpan在本机，不进入配置备份。',
                           helperMaxLines: 3,
                           suffixIcon: IconButton(
-                            tooltip: _showProxy ? '隐藏代理地址' : '显示代理地址',
+                            tooltip: _showProxy ? '隐藏Alamat proxy' : '显示Alamat proxy',
                             onPressed: () =>
                                 setState(() => _showProxy = !_showProxy),
                             icon: Icon(
@@ -253,9 +253,9 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
                       ),
                     ),
                   const SizedBox(height: 28),
-                  _count('目录请求并发', _catalog, (value) => _catalog = value),
+                  _count('Permintaan katalog bersamaan', _catalog, (value) => _catalog = value),
                   const SizedBox(height: 16),
-                  Text('目录请求间隔 · $_interval 毫秒'),
+                  Text('Jeda permintaan katalog · $_interval 毫秒'),
                   Slider(
                     value: _interval.toDouble(),
                     min: 0,
@@ -267,13 +267,13 @@ class _ResourceSettingsScreenState extends State<ResourceSettingsScreen> {
                         : (value) => setState(() => _interval = value.round()),
                   ),
                   const SizedBox(height: 16),
-                  _count('同时下载数量', _downloads, (value) => _downloads = value),
+                  _count('Jumlah unduhan bersamaan', _downloads, (value) => _downloads = value),
                   const SizedBox(height: 12),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     value: _folders,
-                    title: const Text('按站源分类保存'),
-                    subtitle: const Text('新任务放入各站源的子目录，已有下载继续使用原位置。'),
+                    title: const Text('按站源分类Simpan'),
+                    subtitle: const Text('新任务放入各站源的子目录，Sudah ada下载继续使用原位置。'),
                     onChanged: _busy
                         ? null
                         : (value) => setState(() => _folders = value),

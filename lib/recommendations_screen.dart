@@ -26,9 +26,9 @@ class RecommendationsScreen extends StatefulWidget {
 
 class _RecommendationsScreenState extends State<RecommendationsScreen> {
   static const _genres = [
-    CatalogCategory('short_play', '真人剧'),
-    CatalogCategory('comic_series', '漫剧'),
-    CatalogCategory('ai_series', 'AI 剧'),
+    CatalogCategory('short_play', 'Drama live-action'),
+    CatalogCategory('comic_series', 'Drama komik'),
+    CatalogCategory('ai_series', 'Drama AI'),
   ];
   final _scroll = ScrollController();
   String _genre = 'short_play';
@@ -116,7 +116,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
   Widget build(BuildContext context) {
     final refresh = RefreshAction(
       loading: _loading || _more,
-      tooltip: '刷新推荐',
+      tooltip: 'Segarkan rekomendasi',
       onPressed: () => _load(force: true),
     );
     final content = Column(
@@ -133,7 +133,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '公开推荐 · 已加载 ${_items.length} 部',
+              'Rekomendasi publik · 已加载 ${_items.length} 部',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -157,20 +157,20 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                   onPressed: _loading || _more
                       ? null
                       : () => _load(more: _failedMore, force: !_failedMore),
-                  child: const Text('重试'),
+                  child: const Text('Coba lagi'),
                 ),
               ],
             ),
           ),
         Expanded(
           child: !widget.store.allowsSource('hongguo')
-              ? const StatusPanel(title: '当前用户未开放红果', message: '可在用户管理中调整站源权限。')
+              ? const StatusPanel(title: 'Hongguo belum diaktifkan untuk pengguna ini', message: 'Atur izin sumber di menu pengelolaan pengguna.')
               : _loading && _items.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : _items.isEmpty
               ? StatusPanel(
-                  title: _error == null ? '暂无推荐' : '推荐暂时无法加载',
-                  message: _error ?? '稍后刷新可获取新的推荐。',
+                  title: _error == null ? 'Belum ada rekomendasi' : 'Rekomendasi belum dapat dimuat',
+                  message: _error ?? 'Segarkan lagi nanti untuk mendapatkan rekomendasi baru.',
                   onRetry: () => _load(force: true),
                 )
               : LayoutBuilder(
@@ -222,11 +222,11 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                                       icon: const Icon(
                                         Icons.auto_awesome_rounded,
                                       ),
-                                      label: const Text('继续推荐'),
+                                      label: const Text('Lanjutkan rekomendasi'),
                                     )
                                   : TextButton(
                                       onPressed: () => _load(force: true),
-                                      child: const Text('本轮推荐已看完，刷新获取新推荐'),
+                                      child: const Text('Rekomendasi ini sudah selesai. Segarkan untuk mendapatkan rekomendasi baru.'),
                                     ),
                             ),
                           ),
@@ -240,7 +240,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
     );
     if (widget.embedded) return content;
     return Scaffold(
-      appBar: AppBar(title: const Text('红果推荐'), actions: [refresh]),
+      appBar: AppBar(title: const Text('Rekomendasi Hongguo'), actions: [refresh]),
       body: SafeArea(top: false, child: content),
     );
   }

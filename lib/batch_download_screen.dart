@@ -41,19 +41,19 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
   }
 
   String _subtitle(BatchDownloadItem item) {
-    if (item.loading) return '正在读取分集';
+    if (item.loading) return 'Membaca episode';
     if (item.error != null) return item.error!;
-    if (item.detail == null) return '等待读取分集';
+    if (item.detail == null) return 'Menunggu pembacaan episode';
     final count = item.episodes(_batch.includeVip).length;
     final vip = item.detail!.episodes.where((episode) => episode.vip).length;
-    if (count == 0) return '没有非 VIP 分集，可手动选择包含 VIP';
+    if (count == 0) return 'Tidak ada episode non-VIP. Anda dapat memilih episode VIP secara manual.';
     final pieces = <String>[
-      '已选 $count 集',
-      if (!_batch.includeVip && vip > 0) '排除 $vip 集 VIP',
-      if (item.added > 0) '新增 ${item.added} 集',
-      if (item.existing > 0) '已有 ${item.existing} 集',
+      'Dipilih $count 集',
+      if (!_batch.includeVip && vip > 0) 'Dikecualikan $vip 集 VIP',
+      if (item.added > 0) 'Baru ditambahkan ${item.added} 集',
+      if (item.existing > 0) 'Sudah ada ${item.existing} 集',
       if (_batch.settingsLocked && item.pending(_batch.includeVip).isEmpty)
-        '已加入队列',
+        'Ditambahkan ke antrean',
       if (item.detail!.warning.isNotEmpty) item.detail!.warning,
     ];
     return pieces.join(' · ');
@@ -71,11 +71,11 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: Listenable.merge([_batch, widget.store]),
     builder: (context, _) => Scaffold(
-      appBar: AppBar(title: const Text('批量下载')),
+      appBar: AppBar(title: const Text('Unduhan massal')),
       body: SafeArea(
         top: false,
         child: !_batch.hasAccess
-            ? const StatusPanel(title: '下载权限已变更', message: '请返回后重新选择短剧。')
+            ? const StatusPanel(title: 'Izin unduhan berubah', message: 'Kembali lalu pilih drama lagi.')
             : Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1000),
@@ -88,18 +88,18 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                           children: [
                             Text(
-                              '${_batch.items.length} 部短剧',
+                              '${_batch.items.length} drama',
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                             const SizedBox(height: 8),
-                            const Text('先读取分集，再加入下载。默认选择非 VIP 集，已有任务自动跳过。'),
+                            const Text('先读取分集，再Tambahkan ke unduhan。默认选择非 VIP 集，Sudah ada任务自动跳过。'),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<int>(
                               key: const ValueKey('batch-download-quality'),
                               initialValue: _batch.quality,
                               isExpanded: true,
                               decoration: const InputDecoration(
-                                labelText: '下载画质',
+                                labelText: 'Kualitas unduhan',
                               ),
                               onChanged: _batch.busy || _batch.settingsLocked
                                   ? null
@@ -107,7 +107,7 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                               items: [
                                 const DropdownMenuItem(
                                   value: 0,
-                                  child: Text('自动 · 优先高清'),
+                                  child: Text('自动 · Prioritaskan kualitas tinggi'),
                                 ),
                                 for (final quality in [1080, 720, 480])
                                   DropdownMenuItem(
@@ -118,8 +118,8 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                             ),
                             CheckboxListTile(
                               contentPadding: EdgeInsets.zero,
-                              title: const Text('包含 VIP 分集'),
-                              subtitle: const Text('VIP 集可能只能下载试看内容'),
+                              title: const Text('Sertakan episode VIP'),
+                              subtitle: const Text('Episode VIP mungkin hanya dapat diunduh sebagai cuplikan'),
                               value: _batch.includeVip,
                               onChanged: _batch.busy || _batch.settingsLocked
                                   ? null
@@ -140,7 +140,7 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Text(
-                                  '${_batch.submitting ? '正在添加' : '正在读取'}：${_batch.current!.drama.title}',
+                                  '${_batch.submitting ? 'Sedang menambahkan' : 'Sedang membaca'}：${_batch.current!.drama.title}',
                                 ),
                               ),
                             for (final item in _batch.items)
@@ -179,11 +179,11 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                           children: [
                             Text(
                               [
-                                '新增 ${_batch.added} 集',
-                                '已有 ${_batch.existing} 集',
+                                'Baru ditambahkan ${_batch.added} 集',
+                                'Sudah ada ${_batch.existing} 集',
                                 if (_batch.failures > 0)
-                                  '${_batch.failures} 部需重试',
-                                if (_batch.stopped) '已停止后续添加，已加入任务继续下载',
+                                  '${_batch.failures} 部perlu dicoba lagi',
+                                if (_batch.stopped) 'Dihentikan后续添加，已加入任务继续下载',
                               ].join(' · '),
                             ),
                             const SizedBox(height: 8),
@@ -199,23 +199,23 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                                         : _batch.stop,
                                     child: Text(
                                       _batch.stopping
-                                          ? '正在停止'
+                                          ? 'Sedang menghentikan'
                                           : _batch.submitting
-                                          ? '停止添加'
-                                          : '停止读取',
+                                          ? 'Hentikan penambahan'
+                                          : 'Hentikan pembacaan',
                                     ),
                                   )
                                 else ...[
                                   if (_batch.unread > 0)
                                     OutlinedButton(
                                       onPressed: _batch.prepare,
-                                      child: const Text('读取剩余 / 重试'),
+                                      child: const Text('Baca sisanya / coba lagi'),
                                     ),
                                   if (_batch.added + _batch.existing > 0 &&
                                       widget.store.canDownload)
                                     TextButton(
                                       onPressed: _openDownloads,
-                                      child: const Text('查看下载'),
+                                      child: const Text('Lihat unduhan'),
                                     ),
                                   FilledButton.icon(
                                     key: const ValueKey(
@@ -228,7 +228,7 @@ class _BatchDownloadScreenState extends State<BatchDownloadScreen> {
                                         : _batch.submit,
                                     icon: const Icon(Icons.download_rounded),
                                     label: Text(
-                                      '${_batch.settingsLocked ? '继续添加' : '加入下载'} · ${_batch.pendingEpisodes} 集',
+                                      '${_batch.settingsLocked ? 'Lanjutkan penambahan' : 'Tambahkan ke unduhan'} · ${_batch.pendingEpisodes} 集',
                                     ),
                                   ),
                                 ],
